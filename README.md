@@ -1,2 +1,28 @@
-# WDI_GHG_emissions
-Exploring different sources and indicators on GHG emissions for WDI.
+GHG emissions sources and indicators
+================
+
+## Indicators included in WDI
+
+Currently, the following GHG emissions indicators are included in the
+WDI:
+
+## Suggestions for GHG indicators
+
+Choice of indicators depends on different factors:
+
+  - Data availability (country coverage/time series)
+  - Methodology used
+  - Reliability of data
+  - Relevance to development
+
+Possible indicators:
+
+  - Emissions by type in CO2e (CO2, methane, nitrous oxide, fluorinated
+    gases (SF6) + total)
+  - Emissions by sector/categories – use IPCC 1996 categories
+  - Change from base year 1990
+  - Per capita emissions (only total?)
+  - Carbon intensity of economy (CO2e / GDP)
+  - Concentration in atmosphere
+
+## Data sources
