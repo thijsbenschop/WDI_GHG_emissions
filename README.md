@@ -53,7 +53,8 @@ Category descriptions using IPCC 1996 terminology.
   - CDIAC - Carbon Dioxide Information analysis Center :
     <https://cdiac.ess-dive.lbl.gov/trends/emis/meth_reg.html>, data
     from 1751 until 2014
-  - CAIT/Climate Watch - World Resources Institute:
+  - CAIT - Climate Analysis Indicators Tool (Climate Watch / World
+    Resources Institute):
     <https://www.climatewatchdata.org/ghg-emissions?end_year=2018&start_year=1990>
   - PIK - Potsdam Institute for Climate Impact Research:
     <https://www.pik-potsdam.de/paris-reality-check/primap-hist/>
@@ -76,4 +77,8 @@ earlier years of data (closer to 1850).
 
 This would be an argument to exclude
 
-###
+### Plotting data
+
+## Questions
+
+  - Factors used for computation of CO2e of other GHGs
