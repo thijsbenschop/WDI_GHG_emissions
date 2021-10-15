@@ -39,7 +39,7 @@ vignettes/*.pdf
 .Renviron
 
 # Ignore data directory
-/Data/
+/Data_private/
 
 # Ignore rsconnect info
 /rsconnect/
