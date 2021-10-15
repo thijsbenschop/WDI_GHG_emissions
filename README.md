@@ -37,6 +37,7 @@ Environment: Emissions section
 | EN.ATM.NOXE.KT.CE    | Total nitrous oxide emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry)  |
 | EN.ATM.NOXE.ZG       | Nitrous oxide emissions (% change from 1990)                                                                   |
 | EN.ATM.PFCG.KT.CE    | PFC gas emissions (thousand metric tons of CO2 equivalent)                                                     |
+| EN.ATM.SF6G.KT.CE    | SF6 gas emissions (thousand metric tons of CO2 equivalent)                                                     |
 
 <!-- | EN.ATM.PM25.MC.M3        | PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) | -->
 
@@ -47,9 +48,6 @@ Environment: Emissions section
 <!-- | EN.ATM.PM25.MC.T3.ZS | PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-3 value (% of total) | -->
 
 <!-- | EN.ATM.PM25.MC.ZS        | PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total) | -->
-
-EN.ATM.SF6G.KT.CE | SF6 gas emissions (thousand metric tons of CO2
-equivalent) |
 
 Other sections
 
@@ -158,6 +156,7 @@ This would be an argument to exclude LULUCF.
 
 ### Plotting data
 
+Plotting data from different sources for CO2 emmissions
 ![](README_files/figure-gfm/plot_WLD-1.png)<!-- -->![](README_files/figure-gfm/plot_WLD-2.png)<!-- -->
 
 ![](README_files/figure-gfm/plot_CHN-1.png)<!-- -->![](README_files/figure-gfm/plot_CHN-2.png)<!-- -->

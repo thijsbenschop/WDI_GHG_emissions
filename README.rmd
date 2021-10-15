@@ -46,12 +46,13 @@ Environment: Emissions section
 | EN.ATM.NOXE.KT.CE	    | Total nitrous oxide emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) |
 | EN.ATM.NOXE.ZG	      | Nitrous oxide emissions (% change from 1990) |
 | EN.ATM.PFCG.KT.CE	    | PFC gas emissions (thousand metric tons of CO2 equivalent) |
+| EN.ATM.SF6G.KT.CE	    | SF6 gas emissions (thousand metric tons of CO2 equivalent) |
+
 <!-- | EN.ATM.PM25.MC.M3	    | PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) | -->
 <!-- | EN.ATM.PM25.MC.T1.ZS	| PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value (% of total) | -->
 <!-- | EN.ATM.PM25.MC.T2.ZS	| PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-2 value (% of total) | -->
 <!-- | EN.ATM.PM25.MC.T3.ZS	| PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-3 value (% of total) | -->
 <!-- | EN.ATM.PM25.MC.ZS	    | PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total) | -->
-| EN.ATM.SF6G.KT.CE	    | SF6 gas emissions (thousand metric tons of CO2 equivalent) |
 
 Other sections
 
@@ -132,6 +133,7 @@ According to the Working Group III Contribution to the IPCC Fifth Assessment Rep
 This would be an argument to exclude LULUCF.
 
 ### Plotting data
+Plotting data from different sources for CO2 emmissions
 ```{r plot_WLD, echo=FALSE, warning= FALSE}
 combined_sources <- readRDS("Data/data_for_plots/combined_sources.rds")
 
@@ -269,3 +271,8 @@ Miscellaneous
 
 * Factors used for computation of CO2e of other GHGs -> different factors used
 * Use extrapolated values for subset of countries for the years 2016-2018
+
+## Proposal for GHG indicators in WDI
+Due to 
+Source PIK ()
+
