@@ -132,10 +132,27 @@ Category descriptions using IPCC 1996 terminology.
 ### Data uncertainty
 According to the Working Group III Contribution to the IPCC Fifth Assessment Report, global CO2 emissions from fossil fuel combustion are known within *8%* uncertainty (90% confidence interval). CO2 emissions from FOLU (forestry and other land use) have very large uncertainties associated with them in the order of *± 50%*. Uncertainty for global emissions of CH4, N2O and the F-gases has been estimated as *20%*, *60%* and *20%* respectively. For the PIK dataset, regional deforestation emissions are downscaled to the country level using estimates of the deforested area obtained from potential vegetation and calculations for the needed agricultural land. Accordingly levels of uncertainty are quite high for earlier years of data (closer to 1850).
 
-This would be an argument to exclude LULUCF.
+## Proposal for WDI GHG emissions indicators
+Source PIK 
+
+| Series code           | Description           |
+| --------------------- | --------------------- |
+|
+
+List of indicators:
+* Emissions by type in CO2e (CO2, methane, nitrous oxide, fluorinated gases (SF6) + total)
+* Emissions by sector/categories – use IPCC 1996 categories 
+* Change from base year 1990 (own computation)
+* Per capita emissions (only total?) (own computation)
+* Carbon intensity of economy (CO2e / GDP) (own computation)
+
+
+* Concentration in atmosphere
+* Pathways 
+
 
 ### Plotting data
-Plotting data from different sources for CO2 emmissions
+Plotting data from different sources for CO2 emissions
 ```{r plot_WLD, echo=FALSE, warning= FALSE}
 combined_sources <- readRDS("Data/data_for_plots/combined_sources.rds")
 
@@ -242,7 +259,6 @@ ggplot(data=combined_sources_RUS %>% filter(Year >= 1980 & Year <= 2000), aes(Ye
 * Different methodologies
 * Different categories
 * Different geographical boundaries
-* Underlying data in most cases the same (CDIAC before, )
 
 ## Suggestions for GHG indicators
 
@@ -251,30 +267,14 @@ Choice of indicators depends on different factors:
 * Data availability (country coverage/time series)
 * Methodology used
 * Reliability of data
-* Relevance to development
-
-List of indicators:
-* Emissions by type in CO2e (CO2, methane, nitrous oxide, fluorinated gases (SF6) + total)
-* Emissions by sector/categories – use IPCC 1996 categories 
-* Change from base year 1990 (own computation)
-* Per capita emissions (only total?) (own computation)
-* Carbon intensity of economy (CO2e / GDP) (own computation)
-
-
-* Concentration in atmosphere
-* Pathways ?
-
-Miscellaneous 
-
-* Add more detail to description of series (e.g., )
-* Difference CAIT and PIK: CAIT doesn't use official inventories reported UNFCCC, PIK does for countries where available
+* Relevance for development
 
 ## Questions
 
 * Factors used for computation of CO2e of other GHGs -> different factors used
 * Use extrapolated values for subset of countries for the years 2016-2018
 
-## Proposal for GHG indicators in WDI
-Due to 
-Source PIK ()
+## Miscellaneous 
 
+* Add more detail to description of series (e.g., )
+* Difference CAIT and PIK: CAIT doesn't use official inventories reported UNFCCC, PIK does for countries where available

@@ -15,7 +15,7 @@ setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
 
 ####### Read and reshape data ####### 
 ## CDIAC by country - use total CO2
-CDIAC <- as.data.table(read.csv("Data/CDIAC/nation_1751_2014_edited.csv"))
+CDIAC <- as.data.table(read.csv("Data_private/CDIAC/nation_1751_2014_edited.csv"))
 class(CDIAC)
 colnames(CDIAC)
 
@@ -30,7 +30,7 @@ CDIAC_wide
 CDIAC_wide <- CDIAC_wide %>% mutate(across(!Year , ~.x *(11/3)))
 
 ## CDIAC global - use total CO2
-CDIAC_world <- as.data.table(read.csv("Data/CDIAC/global_1751_2014_edited.csv"))
+CDIAC_world <- as.data.table(read.csv("Data_private/CDIAC/global_1751_2014_edited.csv"))
 
 CDIAC_world_wide <- dcast(data = CDIAC_world, 
                           formula = Year ~ Nation, 
@@ -47,7 +47,7 @@ CDIAC_world_wide[, diff_abs := WORLD_sum - WORLD]
 CDIAC_world_wide[, diff_rel := 100 * (diff_abs / WORLD)]
 
 ## CAIT data
-CAIT <- as.data.table(read_xlsx("Data/CAIT/ghg-emissions/CW_CAIT_GHG_Emissions.xlsx"))
+CAIT <- as.data.table(read_xlsx("Data_private/CAIT/ghg-emissions/CW_CAIT_GHG_Emissions.xlsx"))
 CAIT
 
 CAIT_long <- melt(CAIT, id.vars = c("Country", "Source", "Sector", "Gas"))
@@ -62,7 +62,7 @@ class(CAIT_wide$Year)
 CAIT_wide[, Year := as.numeric(as.character((Year)))]
 
 ## WDI
-WDI <- as.data.table(read.csv("Data/WDI/API_EN.ATM.CO2E.KT_DS2_en_csv_v2_2917960_edited.csv"))
+WDI <- as.data.table(read.csv("Data_private/WDI/API_EN.ATM.CO2E.KT_DS2_en_csv_v2_2917960_edited.csv"))
 colnames(WDI)
 setnames(WDI, colnames(WDI)[1], "Nation")
 WDI_world <- WDI[Nation == "World"]
@@ -86,7 +86,7 @@ WDI_wide <- dcast(data = WDI_long,
 WDI_wide
 
 ## PIK
-PIK <- as.data.table(read.csv("./Data/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
+PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
 setnames(PIK, "country", "Nation")
 PIK
 PIK_long <- melt(PIK, id.vars = c("Nation", "scenario", "category", "entity", "unit"))
@@ -129,7 +129,7 @@ PIK_wide_RUS <- dcast(data = PIK_long %>% filter(Nation == "RUS" & entity == "CO
 PIK_wide_RUS[, RUS_PIK := (CAT0 - CAT5) / 1000]
 
 ## IEA
-IEA <- as.data.table(read_xls("Data/IEA/CO2Highlights2020.xls",
+IEA <- as.data.table(read_xls("Data_private/IEA/CO2Highlights2020.xls",
                               sheet = "CO2 FC",
                               range = "A24:AX193"))
 IEA_long <- melt(IEA, id.vars = "Region/Country/Economy")

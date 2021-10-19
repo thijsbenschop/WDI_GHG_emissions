@@ -154,11 +154,27 @@ deforested area obtained from potential vegetation and calculations for
 the needed agricultural land. Accordingly levels of uncertainty are
 quite high for earlier years of data (closer to 1850).
 
-This would be an argument to exclude LULUCF.
+## Proposal for WDI GHG emissions indicators
+
+Source PIK
+
+| Series code | Description |
+| ----------- | ----------- |
+|             |             |
+
+List of indicators: \* Emissions by type in CO2e (CO2, methane, nitrous
+oxide, fluorinated gases (SF6) + total) \* Emissions by
+sector/categories – use IPCC 1996 categories \* Change from base year
+1990 (own computation) \* Per capita emissions (only total?) (own
+computation) \* Carbon intensity of economy (CO2e / GDP) (own
+computation)
+
+  - Concentration in atmosphere
+  - Pathways
 
 ### Plotting data
 
-Plotting data from different sources for CO2 emmissions
+Plotting data from different sources for CO2 emissions
 ![](README_files/figure-gfm/plot_WLD-1.png)<!-- -->![](README_files/figure-gfm/plot_WLD-2.png)<!-- -->
 
 ![](README_files/figure-gfm/plot_CHN-1.png)<!-- -->![](README_files/figure-gfm/plot_CHN-2.png)<!-- -->
@@ -175,7 +191,6 @@ of USSR? CDIAC lists Russia only starting 1992.
   - Different methodologies
   - Different categories
   - Different geographical boundaries
-  - Underlying data in most cases the same (CDIAC before, )
 
 ## Suggestions for GHG indicators
 
@@ -184,23 +199,7 @@ Choice of indicators depends on different factors:
   - Data availability (country coverage/time series)
   - Methodology used
   - Reliability of data
-  - Relevance to development
-
-List of indicators: \* Emissions by type in CO2e (CO2, methane, nitrous
-oxide, fluorinated gases (SF6) + total) \* Emissions by
-sector/categories – use IPCC 1996 categories \* Change from base year
-1990 (own computation) \* Per capita emissions (only total?) (own
-computation) \* Carbon intensity of economy (CO2e / GDP) (own
-computation)
-
-  - Concentration in atmosphere
-  - Pathways ?
-
-Miscellaneous
-
-  - Add more detail to description of series (e.g., )
-  - Difference CAIT and PIK: CAIT doesn’t use official inventories
-    reported UNFCCC, PIK does for countries where available
+  - Relevance for development
 
 ## Questions
 
@@ -209,6 +208,8 @@ Miscellaneous
   - Use extrapolated values for subset of countries for the years
     2016-2018
 
-## Proposal for GHG indicators in WDI
+## Miscellaneous
 
-Due to Source PIK ()
+  - Add more detail to description of series (e.g., )
+  - Difference CAIT and PIK: CAIT doesn’t use official inventories
+    reported UNFCCC, PIK does for countries where available
