@@ -1,0 +1,94 @@
+---
+title: "PIK GHG data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load packages
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(ggrepel)
+library(plotly)
+library(knitr)
+
+rm(list = ls())
+
+# Set working directory
+#setwd("C:/Users/wb460271/OneDrive - WBG/Documents/WDI-GHG")
+setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
+
+####### Read and reshape data ####### 
+## PIK, downloaded from https://zenodo.org/record/5494497#.YZJPvmC0uUk # v.2.3.1 (1750-2019)
+# Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3.1 (1850-2019). zenodo. doi:`10.5281/zenodo.5494497`.
+PIK <- as.data.table(read.csv("./Data_private/PIK/Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_20-Sep_2021.csv"))
+#PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
+
+```
+
+## PIK data description
+New version of PRIMAP-hist GHG emissions data was published in September 2021 spanning data until 2019.
+
+Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3.1 (1850-2019). zenodo. doi:`10.5281/zenodo.5494497`.
+
+Data dowloaded from https://zenodo.org/record/5494497#.YZJPvmC0uUk
+
+### Data composition
+Several datasets available:
+
+- Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_20_Sep_2021.X: The main dataset with numerical extrapolation of all time series to 2019 and three significant digits.
+- Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_no_extrap_20_Sep_2021.X: Variant without numerical extrapolation of missing values and not including the country groups mentioned in section [“country”] (three significant digits).
+- Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_no_rounding_20_Sep_2021.X: The main dataset with numerical extrapolation of all time series to 2019 and eleven significant digits.
+- Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_no_extrap_no_rounding_20_Sep_2021.csv: Variant without numerical extrapolation of missing values and not including the country groups mentioned in section [“country”] (eleven significant digits).
+
+For this exercise, the first dataset with numerical extrapolation is used. 
+
+The dataset includes data for two different scenarios:
+
+- HISTCR: In this scenario country-reported data (CRF, BUR, UNFCCC) is prioritized over third-party data (CDIAC, FAO, Andrew, EDGAR, BP).
+- HISTTP: In this scenario third-party data (CDIAC, FAO, Andrew, EDGAR, BP) is prioritized over country-reported data (CRF, BUR, UNFCCC))
+
+Both series are considered.
+
+### Temporal coverage
+The dataset covers the years 1750-2019, where a considerable number of values 2019 are numerically extrapolated. As the WDI starts in 1960, only values from 1960 are considered.
+
+### Country coverage
+```{r country_coverage, include=FALSE}
+# Check which WDI countries available
+# Load country WDI list (217 countries)
+WDI_countries <- as.data.table(read.csv("Data/wdi_country_list.csv"))
+setnames(WDI_countries, c("long_name", "ISO3"))
+
+PIK_countries <- unique(PIK$area..ISO3.)
+length(PIK_countries) # 215 countries
+table(WDI_countries$ISO3 %in% PIK_countries) # 198 WDI countries available in PIK
+WDI_countries[!(ISO3 %in% PIK_countries)] # list of missing countries
+table(PIK_countries %in% WDI_countries$ISO3)
+PIK_countries[!(PIK_countries %in% WDI_countries$ISO3)] # list of missing countries
+
+# Drop countries/regions not in WDI
+PIK <- PIK[area..ISO3. %in% WDI_countries$ISO3]
+```
+
+The WDI includes `r nrow(WDI_countries)` of which `r sum(WDI_countries$ISO3 %in% PIK_countries)` are included in the PIK dataset. The following WDI countries are not included in the PIK dataset:
+
+```{r echo = FALSE, results='asis'}
+kable(WDI_countries[!(ISO3 %in% PIK_countries)])
+```
+
+# View country-by-country data
+```{r dataprep, echo = FALSE, results='asis'}
+# Convert data in long format
+PIK_long <- melt(PIK, id.vars = c("source", "ISO3", "entity", "unit", "category", "scenario"),
+                 variable.name = "year", value.factor = FALSE, variable.factor = FALSE)
+PIK_long[, year := as.numeric(substring(year, 2, 5))]
+dim(PIK_long)
+```
+
+## CO2
+
+
+

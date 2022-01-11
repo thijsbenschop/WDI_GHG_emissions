@@ -327,3 +327,15 @@ CDIAC_coverage <- cbind(CDIAC_wide$Year, rowSums(is.na(CDIAC_wide[, -1])), rowSu
 CDIAC_coverage
 dim(CDIAC_wide)
 dim(CDIAC_wide[, -1])
+
+#### Further explore PIK data (country coverage, etc.) ####
+colnames(PIK_long)
+class(PIK_long)
+
+table(PIK_long)
+
+# Create one data.table for each GHG 
+PIK_CO2 <- 
+
+
+
