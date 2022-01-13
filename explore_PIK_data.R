@@ -69,6 +69,7 @@ PIK_long <- melt(PIK, id.vars = c("source", "ISO3", "entity", "unit", "category"
 PIK_long[, year := as.numeric(substring(year, 2, 5))]
 dim(PIK_long)
 colnames(PIK_long)
+PIK_long[, value := value / 1000] # convert to Mt CO2e
 
 # Compare HISTCR/HISTTP 
 #HISTCR: In this scenario country-reported data (CRF, BUR, UNFCCC) is prioritized over third-party data (CDIAC, FAO, Andrew, EDGAR, BP).
@@ -110,6 +111,7 @@ CAIT_long <- melt(CAIT, id.vars = c("Country", "Source", "Sector", "Gas"))
 setnames(CAIT_long, "value", "CO2_emissions_ktCO2")
 setnames(CAIT_long, "variable", "Year")
 CAIT_long[, Source := NULL]
+CAIT_long[, Year := as.numeric(as.character(Year))] # convert year to numeric
 
 CAIT_wide <- dcast(data = CAIT_long %>% filter(Sector == "Total excluding LUCF" & Gas == "CO2"), #  & Gas == "All GHG"
                    formula = Year ~ Country,
@@ -118,14 +120,62 @@ class(CAIT_wide$Year)
 CAIT_wide[, Year := as.numeric(as.character((Year)))]
 
 
-# Plot series for each country
+
+##### Plot series for each country #####
 cur_ISO3 <- "RUS"
+
+# Select only current country
+cur_PIK_long <- PIK_long %>% filter(ISO3 == cur_ISO3)
+
+# Reshape to wide
+cur_PIK_wide <- cur_PIK_long %>% select(-unit) %>% 
+  dcast(formula = ... ~ entity + scenario + category) 
+cur_PIK_wide
+
+# Add CAIT data
+cur_CAIT_wide <- CAIT_long %>% 
+  mutate(Sector = gsub(" ", "", Sector)) %>% # remove white spaces in sector names
+  filter(Country == cur_ISO3) %>% 
+  dcast(formula = ... ~ Gas + Sector) %>%
+  rename(year = Year, ISO3 = Country)
+
+sapply(cur_CAIT_wide, class)
+sapply(cur_PIK_wide, class)
+
+cur_combined_wide <- merge(cur_CAIT_wide, cur_PIK_wide, by = c("ISO3", "year"), all.y = TRUE) #cur_CAIT_wide[cur_PIK_wide, ] # add CAIT to PIK
+dim(cur_combined_wide)
+
+cur_fig <- plot_ly(cur_combined_wide, x = ~year, y = ~CO2_HISTCR_M.0.EL, 
+                   name = 'PIK - HISTCR M.0.EL', type = 'scatter', mode = 'lines') %>% 
+  add_trace(y = ~CO2_HISTTP_M.0.EL, name = 'PIK - HISTTP M.0.EL', mode = 'lines') %>%
+  add_trace(y = ~CO2_TotalexcludingLUCF, name = 'CAIT - CO2_Total excluding LUCF', mode = 'lines') %>%
+  layout(title = cur_ISO3, plot_bgcolor = "#e5ecf6", yaxis = list(title = list(text ='CO2 emissions (Mt CO2)')))
+
+cur_fig
+
+#PIK_long %>% filter(ISO3 == cur_ISO3, category == "M.0.EL", entity == "CO2", scenario == "HISTCR")
+
 cur_PIK_long <- PIK_long %>% filter(ISO3 == cur_ISO3, category == "M.0.EL")
 cur_CO2a <- cur_PIK_long %>% filter(entity == "CO2", scenario == "HISTCR") %>% select(value)
-cur_CO2b <- cur_PIK_long %>% filter(entity == "CO2", scenario == "HISTTP")  %>% select(value)
+cur_CO2b <- cur_PIK_long %>% filter(entity == "CO2", scenario == "HISTTP") %>% select(value)
 cur_CO2_CAIT <- c(rep(NA, 30), t(1000 * CAIT %>% filter(Sector == "Total excluding LUCF", Gas == "CO2", Country == cur_ISO3) %>%
                                    select(as.character(1990:2018))), NA)
 cur_CO2 <- cur_PIK_long 
+
+cur_data <- data.frame(year = cur_PIK_long %>% filter(entity == "CO2", scenario == "HISTCR") %>% select(year), 
+                       cur_CO2a = cur_CO2a, 
+                       cur_CO2a = cur_CO2a, 
+                       cur_CO2_CAIT = cur_CO2_CAIT)
+
+
+fig <- plot_ly(cur_data, x = ~year, y = ~value, name = 'trace 0', type = 'scatter', mode = 'lines') 
+fig <- fig %>% add_trace(y = ~value.1, name = 'trace 1', mode = 'lines+markers') 
+fig <- fig %>% add_trace(y = ~cur_CO2_CAIT, name = 'trace 2', mode = 'markers')
+
+fig
+
+
+
 
   
 table(cur_PIK_long$entity)

@@ -13,6 +13,7 @@ library(readxl)
 library(ggrepel)
 library(plotly)
 library(knitr)
+library(htmltools)
 
 rm(list = ls())
 
@@ -20,11 +21,12 @@ rm(list = ls())
 #setwd("C:/Users/wb460271/OneDrive - WBG/Documents/WDI-GHG")
 setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
 
-####### Read and reshape data ####### 
+####### Read data ####### 
 ## PIK, downloaded from https://zenodo.org/record/5494497#.YZJPvmC0uUk # v.2.3.1 (1750-2019)
 # Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3.1 (1850-2019). zenodo. doi:`10.5281/zenodo.5494497`.
 PIK <- as.data.table(read.csv("./Data_private/PIK/Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_20-Sep_2021.csv"))
 #PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
+setnames(PIK, "scenario..PRIMAP.hist.", "scenario")
 
 ```
 
@@ -71,6 +73,11 @@ PIK_countries[!(PIK_countries %in% WDI_countries$ISO3)] # list of missing countr
 
 # Drop countries/regions not in WDI
 PIK <- PIK[area..ISO3. %in% WDI_countries$ISO3]
+
+# Rename variables
+colnames(PIK)
+setnames(PIK, c("area..ISO3.", "category..IPCC2006_PRIMAP."),
+         c("ISO3", "category"))
 ```
 
 The WDI includes `r nrow(WDI_countries)` of which `r sum(WDI_countries$ISO3 %in% PIK_countries)` are included in the PIK dataset. The following WDI countries are not included in the PIK dataset:
@@ -85,7 +92,62 @@ kable(WDI_countries[!(ISO3 %in% PIK_countries)])
 PIK_long <- melt(PIK, id.vars = c("source", "ISO3", "entity", "unit", "category", "scenario"),
                  variable.name = "year", value.factor = FALSE, variable.factor = FALSE)
 PIK_long[, year := as.numeric(substring(year, 2, 5))]
-dim(PIK_long)
+#dim(PIK_long)
+PIK_long <- PIK_long[year >= 1960, ] # only keep if year >= 1960
+PIK_long[, value := value / 1000] # convert to Mt CO2e
+
+## CAIT data for comparison
+CAIT <- as.data.table(read_xlsx("Data_private/CAIT/ghg-emissions/CW_CAIT_GHG_Emissions.xlsx"))
+#CAIT
+
+CAIT_long <- melt(CAIT, id.vars = c("Country", "Source", "Sector", "Gas"))
+setnames(CAIT_long, "value", "CO2_emissions_ktCO2")
+setnames(CAIT_long, "variable", "Year")
+CAIT_long[, Source := NULL]
+CAIT_long[, Year := as.numeric(as.character(Year))] # convert year to numeric
+
+CAIT_wide <- dcast(data = CAIT_long %>% filter(Sector == "Total excluding LUCF" & Gas == "CO2"), #  & Gas == "All GHG"
+                   formula = Year ~ Country,
+                   value.var = "CO2_emissions_ktCO2")
+#class(CAIT_wide$Year)
+CAIT_wide[, Year := as.numeric(as.character((Year)))]
+
+all_ISO3 <- intersect(unique(PIK_long$ISO3), unique(CAIT_long$Country)) # c("RUS", "NLD")
+
+##### Plot series for each country #####
+plots <- lapply(all_ISO3, function(cur_ISO3){
+  #cur_ISO3 <- "RUS"
+  
+  # Select only current country
+  cur_PIK_long <- PIK_long %>% filter(ISO3 == cur_ISO3)
+  
+  # Reshape to wide
+  cur_PIK_wide <- cur_PIK_long %>% select(-unit) %>% 
+    dcast(formula = ... ~ entity + scenario + category) 
+  #cur_PIK_wide
+  
+  # Add CAIT data
+  cur_CAIT_wide <- CAIT_long %>% 
+    mutate(Sector = gsub(" ", "", Sector)) %>% # remove white spaces in sector names
+    filter(Country == cur_ISO3) %>% 
+    dcast(formula = ... ~ Gas + Sector, value.var = "CO2_emissions_ktCO2") %>%
+    rename(year = Year, ISO3 = Country)
+  
+  #sapply(cur_CAIT_wide, class)
+  #sapply(cur_PIK_wide, class)
+  
+  cur_combined_wide <- merge(cur_CAIT_wide, cur_PIK_wide, by = c("ISO3", "year"), all.y = TRUE)
+  dim(cur_combined_wide)
+  
+  cur_fig <- plot_ly(cur_combined_wide, x = ~year, y = ~CO2_HISTCR_M.0.EL, 
+                     name = 'PIK - HISTCR M.0.EL', type = 'scatter', mode = 'lines') %>% 
+    add_trace(y = ~CO2_HISTTP_M.0.EL, name = 'PIK - HISTTP M.0.EL', mode = 'lines') %>%
+    add_trace(y = ~CO2_TotalexcludingLUCF, name = 'CAIT - CO2_Total excluding LUCF', mode = 'lines') %>%
+  layout(title = cur_ISO3, yaxis = list(title = list(text ='CO2 emissions (Mt CO2)')))
+  
+  #print(cur_fig)
+})
+htmltools::tagList(plots)
 ```
 
 ## CO2
