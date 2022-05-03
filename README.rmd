@@ -1,54 +1,51 @@
 ---
-title: "GHG emissions sources and indicators"
+title: "GHG emissions indicators in WDI"
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# Load packages
 library(ggplot2)
 library(dplyr)
+library(knitr)
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(ggrepel)
+library(plotly)
+library(knitr)
+library(htmltools)
+
+
 setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
+
+####### Read data ####### 
+## PIK, downloaded from https://zenodo.org/record/5494497#.YZJPvmC0uUk # v.2.3.1 (1750-2019)
+# Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3.1 (1850-2019). zenodo. doi:`10.5281/zenodo.5494497`.
+PIK <- as.data.table(read.csv("./Data_private/PIK/Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_20-Sep_2021.csv"))
+#PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
+setnames(PIK, "scenario..PRIMAP.hist.", "scenario")
+
+# Read spreadsheets
+cur_indicators <- read_xlsx("current_WDI_indicators.xlsx")
+new_indicators <- read_xlsx("./Data/proposal_ghg_restructuring.xlsx")
 ```
 
-## Overview of indicators included in WDI
+This note describes the current GHG indicators in the WDI and proposes a new set of indicators using a different data source.
+
+## Overview of GHG indicators currently included in WDI
 
 The following GHG related indicators are currently in the WDI database:
 
 Environment: Emissions section
 
-| Series code           | Description                                         | Source    | Time coverage |
-| --------------------- | --------------------------------------------------- | --------- | ------------- |
-| EN.ATM.GHGT.KT.CE	    | Total greenhouse gas emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) | CDIAC / CAIT| 1970-2018|
-| EN.ATM.GHGT.ZG	      | Total greenhouse gas emissions (% change from 1990) | EDGAR (EC JRC/PBL)    | 1991-2012
-| EN.ATM.CO2E.KT	      | Total CO2 emissions (thousand metric tons of CO2 excluding Land-Use Change and Forestry) | CDIAC / CAIT| 1960-2018|
-| EN.ATM.CO2E.GF.KT	    | CO2 emissions from gaseous fuel consumption (kt) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.GF.ZS	    | CO2 emissions from gaseous fuel consumption (% of total) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.LF.KT	    | CO2 emissions from liquid fuel consumption (kt) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.LF.ZS	    | CO2 emissions from liquid fuel consumption (% of total) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.SF.KT	    | CO2 emissions from solid fuel consumption (kt) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.SF.ZS	    | CO2 emissions from solid fuel consumption (% of total) | CDIAC | 1960-2016|
-| EN.ATM.CO2E.EG.ZS	    | CO2 intensity (kg per kg of oil equivalent energy use) | CDIAC | 1990-2015
-| EN.ATM.CO2E.PC	      | CO2 emissions (metric tons per capita) | CDIAC / CAIT| 1960-2018
-| EN.ATM.CO2E.KD.GD	    | CO2 emissions (kg per 2010 US$ of GDP) | CDIAC / CAIT| 1960-2018
-| EN.ATM.CO2E.PP.GD.KD	| CO2 emissions (kg per 2017 PPP $ of GDP) | CDIAC / CAIT (?)| 1990-2018
-| EN.ATM.CO2E.PP.GD	    | CO2 emissions (kg per PPP $ of GDP) | CDIAC / CAIT (?)| 1990-2018
-| EN.ATM.METH.AG.KT.CE	| Agricultural methane emissions (thousand metric tons of CO2 equivalent) | CDIAC / CAIT | 1969-2018
-| EN.ATM.METH.AG.ZS	    | Agricultural methane emissions (% of total) | EDGAR (EC JRC/PBL) | 1970-2008
-| EN.ATM.METH.EG.KT.CE	| Methane emissions in energy sector (thousand metric tons of CO2 equivalent) | CDIAC / CAIT | 1969-2018
-| EN.ATM.METH.EG.ZS	    | Energy related methane emissions (% of total) | EDGAR (EC JRC/PBL) | 1970-2008
-| EN.ATM.METH.KT.CE     | Total methane emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) | CDIAC / CAIT | 1970-2018
-| EN.ATM.METH.ZG	      | Methane emissions (% change from 1990) | EDGAR (EC JRC/PBL) | 1991-2012
-| EN.ATM.NOXE.AG.KT.CE	| Agricultural nitrous oxide emissions (thousand metric tons of CO2 equivalent)  | CDIAC / CAIT | 1969-2018
-| EN.ATM.NOXE.AG.ZS	    | Agricultural nitrous oxide emissions (% of total) | EDGAR (EC JRC/PBL) | 1970-2008
-| EN.ATM.NOXE.EG.KT.CE	| Nitrous oxide emissions in energy sector (thousand metric tons of CO2 equivalent) | CDIAC / CAIT | 1969-2018
-| EN.ATM.NOXE.EG.ZS	    | Nitrous oxide emissions in energy sector (% of total) | EDGAR (EC JRC/PBL) | 1970-2008
-| EN.ATM.NOXE.KT.CE	    | Total nitrous oxide emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) | CDIAC / CAIT | 1970-2018
-| EN.ATM.NOXE.ZG	      | Nitrous oxide emissions (% change from 1990) | EDGAR (EC JRC/PBL) | 1991-2012
-| EN.ATM.HFCG.KT.CE	    | HFC gas emissions (thousand metric tons of CO2 equivalent) | EDGAR (EC JRC/PBL) | 1990-2010 (not annual)
-| EN.ATM.PFCG.KT.CE	    | PFC gas emissions (thousand metric tons of CO2 equivalent) | EDGAR (EC JRC/PBL) | 1990-2010 (not annual)
-| EN.ATM.SF6G.KT.CE	    | SF6 gas emissions (thousand metric tons of CO2 equivalent) | EDGAR (EC JRC/PBL) | 1990-2010 (not annual)
-| EN.ATM.GHGO.KT.CE	    | Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2 equivalent)  | EDGAR (EC JRC/PBL) | 1970-2016 (not annual)
-| EN.ATM.GHGO.ZG        | Other greenhouse gas emissions (% change from 1990) | EDGAR (EC JRC/PBL) | 1991-2012
+```{r display_cur_indicators, include = TRUE}
+kable(cur_indicators)
+```
 
 <!-- | EN.ATM.PM25.MC.M3	    | PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) | -->
 <!-- | EN.ATM.PM25.MC.T1.ZS	| PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-1 value (% of total) | -->
@@ -66,11 +63,34 @@ Other sections
 <!-- | EN.CLC.NCOM	          | Latest UNFCCC national communication            || -->
 
 <!-- EN.ATM.CO2E.KT - Carbon dioxide emissions are those stemming from the burning of fossil fuels and the manufacture of cement. They include carbon dioxide produced during consumption of solid, liquid, and gas fuels and gas flaring.  -->
- 
+
+### Scoring of current indicators
+```{r display_scoring_cur_indicators, include = TRUE}
+
+# Load score_table current WDI GHG indicators
+score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
+#colnames(score_table_cur)
+
+kable(score_table_cur[, c("Indicator.Code", "hybrid_score_wgtd", "geographic_score_hybrid", "temporal_score_hybrid",
+                          "completeness_score_hybrid", "usage_score_hybrid")])
+```
+### Issues with current data sources/indicators
+GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. Furthermore, the current series are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.
+
+```{r plot_trend_break, include = FALSE}
+
+
+```
+
+```{r plot_volatility, include = FALSE}
+
+```
+
 ## Definitions
+
 ### Kyoto basket greenhouse gases
 
-| Code   | Description                                     |
+| Code   | Description                                      |
 | ------ | ------------------------------------------------ |
 | CO2 | Carbon Dioxide |
 | CH4 | Methane |
@@ -78,13 +98,24 @@ Other sections
 | N2O | Nitrous Oxide |
 | SF6 | Sulfur Hexafluoride |
 
-Global warming potentials : SAR / AR4 - e.g. Methane 21 vs. 25
+### Global warming potentials 
+Global Warming Potentials (GWP) are the factors used to convert other GHGs into CO2e to make 
+them comparable w.r.t. the effect on global warming. GWP is a measure of how much 
+energy the emissions of 1 ton of a gas will absorb over a given period of time, 
+relative to the emissions of 1 ton of carbon dioxide (CO2). GWPs are estimates 
+and different sets of GWPs are used. We use the GWPs from the fourth IPCC assessment report:
+
+| GHG   | GWP                                      |
+| ------ | ------------------------------------------------ |
+| CO2 | 1 |
+| CH4 | 25 |
+| N2O | 298 |
 
 ### Category codes
 
 Category descriptions using IPCC 1996 terminology.
 
-| Code   | Description                                     |
+| Code   | Description                                      |
 | ------ | ------------------------------------------------ |
 | 0      | National Total                                   |
 | M.0.EL | National Total, excluding LULUCF                 |
@@ -98,7 +129,17 @@ Category descriptions using IPCC 1996 terminology.
 | 6      | Waste                                            |
 | 7      | Other                                            |
 
-## Data sources
+Data on LULUCF has high uncertainty and we therefore exlcude.
+
+## Data sources for GHG
+All sources rely on the same primary sources for data.
+
+* PIK PRIMAP - Potsdam Institute for Climate Impact Research
+  + All Kyoto GHGs by country, year and category
+  + *URL* https://zenodo.org/record/5494497#.YZJPvmC0uUk
+  + *Time coverage*: data from 1850-2019 (check https://zenodo.org/record/4479172#.YV765ZpNeUk published in September 2021)
+  + *Countries*: 216 countries
+  + *License*: CC BY 4.0
 * CDIAC - Carbon Dioxide Information analysis Center
   + CO2 emissions from fossil-fuel burning, cement production, and gas flaring
   + *URL* https://cdiac.ess-dive.lbl.gov/trends/emis/meth_reg.html
@@ -111,12 +152,6 @@ Category descriptions using IPCC 1996 terminology.
   + *Time coverage*: data from 1990-2018
   + *Countries*: 197 countries (parties to UNFCCC)
   + *License*: 
-* PIK PRIMAP - Potsdam Institute for Climate Impact Research
-  + All Kyoto GHGs by country, year and category
-  + *URL* https://www.pik-potsdam.de/paris-reality-check/primap-hist/, https://dataservices.gfz-potsdam.de/pik/showshort.php?id=escidoc:4736895
-  + *Time coverage*: data from 1850-2018 (check https://zenodo.org/record/4479172#.YV765ZpNeUk published in January 2021)
-  + *Countries*: 216 countries
-  + *License*: CC BY 4.0
 * GCP - Global Carbon Project: https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
   + CO2 emissions from fossil fuel combustion, cement production, and bunkers.
   + *URL* https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
@@ -133,11 +168,57 @@ Category descriptions using IPCC 1996 terminology.
 According to the Working Group III Contribution to the IPCC Fifth Assessment Report, global CO2 emissions from fossil fuel combustion are known within *8%* uncertainty (90% confidence interval). CO2 emissions from FOLU (forestry and other land use) have very large uncertainties associated with them in the order of *± 50%*. Uncertainty for global emissions of CH4, N2O and the F-gases has been estimated as *20%*, *60%* and *20%* respectively. For the PIK dataset, regional deforestation emissions are downscaled to the country level using estimates of the deforested area obtained from potential vegetation and calculations for the needed agricultural land. Accordingly levels of uncertainty are quite high for earlier years of data (closer to 1850).
 
 ## Proposal for WDI GHG emissions indicators
-Source PIK 
 
-| Series code           | Description           |
-| --------------------- | --------------------- |
-|
+### Temporal coverage
+The dataset covers the years 1750-2019, where a considerable number of values 2019 are numerically extrapolated. As the WDI starts in 1960, only values from 1960 are considered.
+
+### Country coverage
+```{r country_coverage, include=FALSE}
+# Check which WDI countries available
+# Load country WDI list (217 countries)
+WDI_countries <- as.data.table(read.csv("Data/wdi_country_list.csv"))
+setnames(WDI_countries, c("long_name", "ISO3"))
+
+PIK_countries <- unique(PIK$area..ISO3.)
+length(PIK_countries) # 215 countries
+table(WDI_countries$ISO3 %in% PIK_countries) # 198 WDI countries available in PIK
+WDI_countries[!(ISO3 %in% PIK_countries)] # list of missing countries
+table(PIK_countries %in% WDI_countries$ISO3)
+PIK_countries[!(PIK_countries %in% WDI_countries$ISO3)] # list of missing countries
+
+# Drop countries/regions not in WDI
+PIK <- PIK[area..ISO3. %in% WDI_countries$ISO3]
+
+# Rename variables
+colnames(PIK)
+setnames(PIK, c("area..ISO3.", "category..IPCC2006_PRIMAP."),
+         c("ISO3", "category"))
+```
+
+The WDI includes `r nrow(WDI_countries)` of which `r sum(WDI_countries$ISO3 %in% PIK_countries)` are included in the PIK dataset. The following WDI countries are not included in the PIK dataset:
+
+```{r echo = FALSE, results='asis'}
+kable(WDI_countries[!(ISO3 %in% PIK_countries)])
+```
+
+### New indicators
+
+```{r list_of_new_indicators, include = FALSE}
+kable(new_indicators)
+```
+
+### Scores of new indicators
+All 26 indicators have the same score of 3.571429 when using the extrapolated datasets.
+
+```{r score_of_new_indicators, include = FALSE}
+
+# Load score_table current WDI GHG indicators
+# score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
+# colnames(score_table_cur)
+# 
+# 
+# kable(new_indicators)
+```
 
 List of indicators:
 * Emissions by type in CO2e (CO2, methane, nitrous oxide, fluorinated gases (SF6) + total)
@@ -146,9 +227,30 @@ List of indicators:
 * Per capita emissions (only total?) (own computation)
 * Carbon intensity of economy (CO2e / GDP) (own computation)
 
-
 * Concentration in atmosphere
 * Pathways 
+
+## Decisions to make
+### Sectors / GHG combinations
+Some sector/GHG combinations are not common as not all gases are produced in each sector. Therefore, some combinations could be dropped
+or keep all 
+
+Proposal:
+
+### Third-party data vs. country-reported data
+PIK published two main series: one that relies on third-party data and another that relies on country-reported data. The third-party data is a smoother series.
+
+Proposal: use third-party data
+
+### Units
+Convert all GHG data into CO2e for comparison or report in tons of respective GHG
+
+Proposal:
+
+### Extrapolated values
+Use extrapolated values for latest year for some countries or keep missing values
+
+
 
 
 ### Plotting data
@@ -270,11 +372,3 @@ Choice of indicators depends on different factors:
 * Relevance for development
 
 ## Questions
-
-* Factors used for computation of CO2e of other GHGs -> different factors used
-* Use extrapolated values for subset of countries for the years 2016-2018
-
-## Miscellaneous 
-
-* Add more detail to description of series (e.g., )
-* Difference CAIT and PIK: CAIT doesn't use official inventories reported UNFCCC, PIK does for countries where available
