@@ -1,6 +1,6 @@
 ---
 title: "GHG emissions indicators in WDI"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +19,8 @@ library(ggrepel)
 library(plotly)
 library(knitr)
 library(htmltools)
-
+library(data.tree)
+library(DiagrammeR)
 
 setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
 
@@ -32,19 +33,57 @@ setnames(PIK, "scenario..PRIMAP.hist.", "scenario")
 
 # Read spreadsheets
 cur_indicators <- read_xlsx("current_WDI_indicators.xlsx")
-new_indicators <- read_xlsx("./Data/proposal_ghg_restructuring.xlsx")
+new_indicators <- read_xlsx("./Data/new_indicators.xlsx")
 ```
 
 This note describes the current GHG indicators in the WDI and proposes a new set of indicators using a different data source.
 
 ## Overview of GHG indicators currently included in WDI
 
-The following GHG related indicators are currently in the WDI database:
+The following 32 GHG related indicators are currently in the WDI database:
 
 Environment: Emissions section
 
-```{r display_cur_indicators, echo=FALSE, results = 'asis'}
-kable(cur_indicators)
+```{r display_cur_indicators, out.width = '100%', echo=FALSE, results = 'asis'}
+
+#kable(cur_indicators)
+cur_indicators$pathString <- paste("WDI GHG Indicators", 
+                                   cur_indicators$GHG, 
+                                   cur_indicators$Sector, 
+                                   cur_indicators$`Series code`,
+                                   cur_indicators$Description,
+                                   sep = "/")
+
+cur_indicators_tree <- as.Node(cur_indicators)
+
+#print(cur_indicators_tree) #, "Description", "Source", "Time coverage")
+
+SetGraphStyle(cur_indicators_tree, rankdir = "LR") # left-right
+
+fontsizenew = 24
+
+SetEdgeStyle(cur_indicators_tree, arrowhead = "vee", color = "grey35", penwidth = 2, fontsize = fontsizenew)
+
+SetNodeStyle(cur_indicators_tree, style = "filled,rounded", shape = "box", fillcolor = "White", 
+             fontname = "helvetica", tooltip = GetDefaultTooltip, fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$All, fillcolor = "LightBlue", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$CO2, fillcolor = "Orange", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+
+
+plot(cur_indicators_tree)
+
+
+
+
+```
+
+```{r display_cur_indicators_2, out.width = '300%', echo=FALSE, results = 'asis'}
+#SetGraphStyle(cur_indicators_tree, rankdir = "TP") # top-bottom
+#plot(cur_indicators_tree)
 ```
 
 <!-- | EN.ATM.PM25.MC.M3	    | PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) | -->
@@ -53,11 +92,11 @@ kable(cur_indicators)
 <!-- | EN.ATM.PM25.MC.T3.ZS	| PM2.5 pollution, population exposed to levels exceeding WHO Interim Target-3 value (% of total) | -->
 <!-- | EN.ATM.PM25.MC.ZS	    | PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total) | -->
 
-Other sections
+<!-- Other sections -->
 
-| Series code           | Description                                     | Source                        | Time coverage |
-| --------------------- | ----------------------------------------------- | ----------------------------- | ------------- |
-| EN.CLC.GHGR.MT.CE	    | GHG net emissions/removals by LUCF (MtCO2e)     | UNFCCC                        | 1990 - 2009   |
+<!-- | Series code           | Description                                     | Source                        | Time coverage | -->
+<!-- | --------------------- | ----------------------------------------------- | ----------------------------- | ------------- | -->
+<!-- | EN.CLC.GHGR.MT.CE	    | GHG net emissions/removals by LUCF (MtCO2e)     | UNFCCC                        | 1990 - 2009   | -->
 <!-- | EN.CLC.ICER	          | Issued Certified Emission Reductions (CERs) from CDM (thousands) || -->
 <!-- | EN.CLC.IERU	          | Issued Emission Reduction Units (ERUs) from JI (thousands) || -->
 <!-- | EN.CLC.NCOM	          | Latest UNFCCC national communication            || -->
@@ -65,7 +104,7 @@ Other sections
 <!-- EN.ATM.CO2E.KT - Carbon dioxide emissions are those stemming from the burning of fossil fuels and the manufacture of cement. They include carbon dioxide produced during consumption of solid, liquid, and gas fuels and gas flaring.  -->
 
 ### Scoring of current indicators
-```{r display_scoring_cur_indicators, include = TRUE}
+```{r display_scoring_cur_indicators, echo=FALSE, results = 'asis'}
 
 # Load score_table current WDI GHG indicators
 score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
@@ -85,9 +124,9 @@ ggplot(data=combined_sources %>% filter(Year >= 1960), aes(Year)) +
   geom_line(aes(y = WORLD_CDIAC, colour = "CDIAC"), size = 1)+
   geom_line(aes(y = WORLD_WDI, colour = "WDI"), size = 1) +
   geom_line(aes(y = CAT0/1000, colour = "PIK CAT0"), size = 1) +
-  geom_line(aes(y = WORLD_PIK_1, colour = "PIK CAT0 - CAT5"), size = 1) +
-  geom_line(aes(y = WORLD_PIK_2, colour = "PIK CAT0 - CAT5 - CAT6 - CAT7"), size = 1) +
-  geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK CAT1 + CAT2"), size = 1) +
+  #geom_line(aes(y = WORLD_PIK_1, colour = "PIK CAT0 - CAT5"), size = 1) +
+  #geom_line(aes(y = WORLD_PIK_2, colour = "PIK CAT0 - CAT5 - CAT6 - CAT7"), size = 1) +
+  #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK CAT1 + CAT2"), size = 1) +
   labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "World", subtitle = "1960-latest datapoint")
 
 ```
@@ -102,9 +141,9 @@ ggplot(data=combined_sources_CHN %>% filter(Year >= 1960), aes(Year)) +
   geom_line(aes(y = WDI_CHN, colour = "WDI - CHN"), size = 1) +
   geom_line(aes(y = CAIT_CHN, colour = "CAIT"), size = 1) +
   geom_line(aes(y = IEA_CHN, colour = "IEA"), size = 1) +
-  geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
+  #geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
   geom_line(aes(y = CHN_PIK, colour = "PIK - CATM.0.EL"), size = 1) +
-  geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
+  #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
   labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "China", subtitle = "1960-latest datapoint")
 
 ```
@@ -117,9 +156,9 @@ ggplot(data=combined_sources_USA %>% filter(Year >= 1960), aes(Year)) +
   geom_line(aes(y = WDI_USA , colour = "WDI - USA"), size = 1) +
   geom_line(aes(y = CAIT_USA, colour = "CAIT"), size = 1) +
   geom_line(aes(y = IEA_USA, colour = "IEA"), size = 1) +
-  geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
+  #geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
   geom_line(aes(y = USA_PIK, colour = "PIK - CATM.0.EL"), size = 1) +
-  geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
+  #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
   labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "USA", subtitle = "1960-latest datapoint") #+
 
 ```
@@ -133,8 +172,8 @@ ggplot(data=combined_sources_RUS %>% filter(Year >= 1960), aes(Year)) +
   geom_line(aes(y = CAIT_RUS, colour = "CAIT"), size = 1) +
   geom_line(aes(y = IEA_RUS, colour = "IEA"), size = 1) +
   geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
-  geom_line(aes(y = RUS_PIK, colour = "PIK - CAT0 - CAT5"), size = 1) +
-  geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
+ # geom_line(aes(y = RUS_PIK, colour = "PIK - CAT0 - CAT5"), size = 1) +
+  #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
   labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "Russian Federation", subtitle = "1960-latest datapoint")
 
 ```
@@ -203,7 +242,6 @@ plot_function <- function(cur_ISO3){
   #htmltools::tagList(plots)
 }
 
-plot_function("NLD")
 
 ```
 
@@ -333,14 +371,40 @@ kable(WDI_countries[!(ISO3 %in% PIK_countries)])
 
 ### New indicators
 
-```{r list_of_new_indicators, include = TRUE}
-kable(new_indicators)
+```{r list_of_new_indicators, out.height = '200%', echo = FALSE, results='asis'}
+#kable(new_indicators)
+
+new_indicators$pathString <- paste("WDI GHG Indicators", 
+                                   new_indicators$Gases, 
+                                   new_indicators$Sector...5, 
+                                   new_indicators$`Variable Code`,
+                                   new_indicators$`Variable Name`,
+                                   sep = "/")
+
+new_indicators_tree <- as.Node(new_indicators)
+
+#print(new_indicators_tree) #, "Description", "Source", "Time coverage")
+
+SetGraphStyle(new_indicators_tree, rankdir = "LR") # left-right
+
+SetEdgeStyle(new_indicators_tree, arrowhead = "vee", color = "grey35", penwidth = 2, fontsize = fontsizenew)
+
+SetNodeStyle(new_indicators_tree, style = "filled,rounded", shape = "box", fillcolor = "White", 
+             fontname = "helvetica", tooltip = GetDefaultTooltip, fontsize = fontsizenew)
+SetNodeStyle(new_indicators_tree$`KYOTOGHG (AR4GWP100)`, fillcolor = "LightBlue", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(new_indicators_tree$CO2, fillcolor = "Orange", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(new_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(new_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(new_indicators_tree$`FGASES (AR4GWP100)`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+
+plot(new_indicators_tree)
+
 ```
 
 ### Scores of new indicators
 All 26 indicators have the same score of 3.571429 when using the dataset with extrapolated values.
 
-```{r score_of_new_indicators, include = FALSE}
+```{r score_of_new_indicators, echo = FALSE, results='asis'}
 
 # Load score_table current WDI GHG indicators
 # score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
@@ -369,6 +433,8 @@ j.	CO2 – Industrial processes
 k.	N2O – Agriculture
 l.	N2O – Waste
 
+![Overview of number of extrapolated values by indicator for the years 2017-2019](info_on_extrapolation.png)
+
 ### LUCF
 LUCF data have a higher uncertainty and can distort the series strongly.
 
@@ -380,14 +446,16 @@ PIK published two main series: one that relies on third-party data and another t
 Proposal: use third-party data
 
 ### Units
-Convert all GHG data into CO2e for comparison or report in tons of respective GHG
+Convert all GHG data into CO2e for comparison or report in tons of respective GHG. Issue with GWP that differs.
 
 Proposal: Report all GHGs in CO2e for comparability.
 
 ### Extrapolated values
 Use extrapolated values for latest year for some countries or keep missing values
 
-Proposal: Include extrapolated values for copmpleteness and update series regularly.
+![Overview of number of extrapolated values by indicator for the years 2017-2019](info_on_extrapolation.png)
+
+Proposal: Include extrapolated values for completeness and update series regularly.
 
 ### Derived indicators to include
 
