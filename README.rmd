@@ -40,13 +40,13 @@ This note describes the current GHG indicators in the WDI and proposes a new set
 
 ## Overview of GHG indicators currently included in WDI
 
-The following 32 GHG related indicators are currently in the WDI database:
+The following 37 GHG related indicators are currently in the WDI database:
 
 Environment: Emissions section
 
-```{r display_cur_indicators, out.width = '100%', echo=FALSE, results = 'asis'}
+```{r display_cur_indicators, fig.width=12, echo=FALSE, results = 'asis'}
+kable(cur_indicators)
 
-#kable(cur_indicators)
 cur_indicators$pathString <- paste("WDI GHG Indicators", 
                                    cur_indicators$GHG, 
                                    cur_indicators$Sector, 
@@ -72,7 +72,6 @@ SetNodeStyle(cur_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fo
 SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
-
 
 plot(cur_indicators_tree)
 
@@ -104,10 +103,13 @@ plot(cur_indicators_tree)
 <!-- EN.ATM.CO2E.KT - Carbon dioxide emissions are those stemming from the burning of fossil fuels and the manufacture of cement. They include carbon dioxide produced during consumption of solid, liquid, and gas fuels and gas flaring.  -->
 
 ### Scoring of current indicators
+
+Using hybrid scoring considering time and country coverage and usage statistics.
+
 ```{r display_scoring_cur_indicators, echo=FALSE, results = 'asis'}
 
 # Load score_table current WDI GHG indicators
-score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
+score_table_cur <- read.csv("current_WDI_indicators_scores_2.csv")
 #colnames(score_table_cur)
 
 kable(score_table_cur[, c("Indicator.Code", "hybrid_score_wgtd", "geographic_score_hybrid", "temporal_score_hybrid",
@@ -115,6 +117,12 @@ kable(score_table_cur[, c("Indicator.Code", "hybrid_score_wgtd", "geographic_sco
 ```
 ### Issues with current data sources/indicators
 GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. Furthermore, the current series are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.
+
+Licensing issues and data availability: indicators from IEA are not distributed under a license that allows redistribution.
+
+The official SDG indicators on GHG emissions are INDICATOR 9.4.1 CO2 emission per unit of value added and 
+INDICATOR 13.2.2 Total greenhouse gas emissions per year (https://unstats.un.org/sdgs/dataportal/database). 
+also licensing terms and SDGs. The respective sources are UNIDO and UNFCCC. 
 
 ```{r plot_WLD, echo=FALSE, warning= FALSE}
 combined_sources <- readRDS("Data/data_for_plots/combined_sources.rds")
@@ -468,3 +476,7 @@ Proposal: Include extrapolated values for completeness and update series regular
 
 Proposal: include total per capita GHG emissions and total per capita CO2 emissions
 
+## Questions
+- Does the indicator selection serve broad users as a core set of the GHG emission series? 
+- Which level of sector disaggregation is sufficient to serve the users of the WDI and how does that compare to the needs of the users of the CCDR database?
+  

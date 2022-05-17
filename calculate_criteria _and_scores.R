@@ -176,4 +176,4 @@ score_table <- wdic %>%
   ) 
 
 # Export score_table current WDI GHG indicators
-write.csv(score_table, "current_WDI_indicators_scores.csv")
+write.csv(score_table, "current_WDI_indicators_scores_2.csv")
