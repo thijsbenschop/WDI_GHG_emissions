@@ -44,7 +44,11 @@ The following 37 GHG related indicators are currently in the WDI database:
 
 Environment: Emissions section
 
-```{r display_cur_indicators, fig.width=12, echo=FALSE, results = 'asis'}
+```{r display_cur_indicators, echo=FALSE, results = 'asis'}
+#class(cur_indicators) # sort by GHG and sector 
+cur_indicators <- as.data.table(cur_indicators)
+cur_indicators <- cur_indicators[order(GHG, Sector)]
+
 kable(cur_indicators)
 
 cur_indicators$pathString <- paste("WDI GHG Indicators", 
@@ -60,7 +64,7 @@ cur_indicators_tree <- as.Node(cur_indicators)
 
 SetGraphStyle(cur_indicators_tree, rankdir = "LR") # left-right
 
-fontsizenew = 24
+fontsizenew = 30
 
 SetEdgeStyle(cur_indicators_tree, arrowhead = "vee", color = "grey35", penwidth = 2, fontsize = fontsizenew)
 
@@ -71,16 +75,13 @@ SetNodeStyle(cur_indicators_tree$CO2, fillcolor = "Orange", penwidth = "2px", fo
 SetNodeStyle(cur_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
-SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+#SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 
-plot(cur_indicators_tree)
-
-
-
+plot(cur_indicators_tree, title = "Current GHG indicators in WDO by GHG and sector")
 
 ```
 
-```{r display_cur_indicators_2, out.width = '300%', echo=FALSE, results = 'asis'}
+```{r display_cur_indicators_4, out.width = '300%', echo=FALSE, results = 'asis'}
 #SetGraphStyle(cur_indicators_tree, rankdir = "TP") # top-bottom
 #plot(cur_indicators_tree)
 ```
@@ -102,20 +103,22 @@ plot(cur_indicators_tree)
 
 <!-- EN.ATM.CO2E.KT - Carbon dioxide emissions are those stemming from the burning of fossil fuels and the manufacture of cement. They include carbon dioxide produced during consumption of solid, liquid, and gas fuels and gas flaring.  -->
 
-### Scoring of current indicators
+<!-- ### Scoring of current indicators -->
 
-Using hybrid scoring considering time and country coverage and usage statistics.
+<!-- Using hybrid scoring considering time and country coverage and usage statistics. -->
 
-```{r display_scoring_cur_indicators, echo=FALSE, results = 'asis'}
+<!-- ```{r display_scoring_cur_indicators, echo=FALSE, results = 'asis'} -->
 
-# Load score_table current WDI GHG indicators
-score_table_cur <- read.csv("current_WDI_indicators_scores_2.csv")
-#colnames(score_table_cur)
+<!-- # Load score_table current WDI GHG indicators -->
+<!-- score_table_cur <- read.csv("current_WDI_indicators_scores_2.csv") -->
+<!-- #colnames(score_table_cur) -->
 
-kable(score_table_cur[, c("Indicator.Code", "hybrid_score_wgtd", "geographic_score_hybrid", "temporal_score_hybrid",
-                          "completeness_score_hybrid", "usage_score_hybrid")])
-```
+<!-- kable(score_table_cur[, c("Indicator.Code", "hybrid_score_wgtd", "geographic_score_hybrid", "temporal_score_hybrid", -->
+<!--                           "completeness_score_hybrid", "usage_score_hybrid")]) -->
+<!-- ``` -->
+
 ### Issues with current data sources/indicators
+
 GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. Furthermore, the current series are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.
 
 Licensing issues and data availability: indicators from IEA are not distributed under a license that allows redistribution.
@@ -135,7 +138,7 @@ ggplot(data=combined_sources %>% filter(Year >= 1960), aes(Year)) +
   #geom_line(aes(y = WORLD_PIK_1, colour = "PIK CAT0 - CAT5"), size = 1) +
   #geom_line(aes(y = WORLD_PIK_2, colour = "PIK CAT0 - CAT5 - CAT6 - CAT7"), size = 1) +
   #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK CAT1 + CAT2"), size = 1) +
-  labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "World", subtitle = "1960-latest datapoint")
+  labs(x = "Year", y= "CO2 emissions (MtCO2)", title = "World", subtitle = "1960-latest datapoint")
 
 ```
 
@@ -152,7 +155,7 @@ ggplot(data=combined_sources_CHN %>% filter(Year >= 1960), aes(Year)) +
   #geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
   geom_line(aes(y = CHN_PIK, colour = "PIK - CATM.0.EL"), size = 1) +
   #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
-  labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "China", subtitle = "1960-latest datapoint")
+  labs(x = "Year", y= "CO2 emissions (MtCO2)", title = "China", subtitle = "1960-latest datapoint")
 
 ```
 
@@ -167,7 +170,7 @@ ggplot(data=combined_sources_USA %>% filter(Year >= 1960), aes(Year)) +
   #geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
   geom_line(aes(y = USA_PIK, colour = "PIK - CATM.0.EL"), size = 1) +
   #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
-  labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "USA", subtitle = "1960-latest datapoint") #+
+  labs(x = "Year", y= "CO2 emissions (MtCO2)", title = "USA", subtitle = "1960-latest datapoint") #+
 
 ```
 
@@ -182,7 +185,7 @@ ggplot(data=combined_sources_RUS %>% filter(Year >= 1960), aes(Year)) +
   geom_line(aes(y = CAT0/1000, colour = "PIK - CAT0"), size = 1) +
  # geom_line(aes(y = RUS_PIK, colour = "PIK - CAT0 - CAT5"), size = 1) +
   #geom_line(aes(y = (CAT1 + CAT2)/1000, colour = "PIK - CAT1 + CAT2"), size = 1) +
-  labs(x = "Year", y= "CO2 emissions (ktCO2)", title = "Russian Federation", subtitle = "1960-latest datapoint")
+  labs(x = "Year", y= "CO2 emissions (MtCO2)", title = "Russian Federation", subtitle = "1960-latest datapoint")
 
 ```
 
@@ -202,14 +205,14 @@ CAIT <- as.data.table(read_xlsx("Data_private/CAIT/ghg-emissions/CW_CAIT_GHG_Emi
 #CAIT
 
 CAIT_long <- melt(CAIT, id.vars = c("Country", "Source", "Sector", "Gas"))
-setnames(CAIT_long, "value", "CO2_emissions_ktCO2")
+setnames(CAIT_long, "value", "CO2_emissions_MtCO2")
 setnames(CAIT_long, "variable", "Year")
 CAIT_long[, Source := NULL]
 CAIT_long[, Year := as.numeric(as.character(Year))] # convert year to numeric
 
 CAIT_wide <- dcast(data = CAIT_long %>% filter(Sector == "Total excluding LUCF" & Gas == "CO2"), #  & Gas == "All GHG"
                    formula = Year ~ Country,
-                   value.var = "CO2_emissions_ktCO2")
+                   value.var = "CO2_emissions_MtCO2")
 #class(CAIT_wide$Year)
 CAIT_wide[, Year := as.numeric(as.character((Year)))]
 
@@ -231,7 +234,7 @@ plot_function <- function(cur_ISO3){
   cur_CAIT_wide <- CAIT_long %>% 
     mutate(Sector = gsub(" ", "", Sector)) %>% # remove white spaces in sector names
     filter(Country == cur_ISO3) %>% 
-    dcast(formula = ... ~ Gas + Sector, value.var = "CO2_emissions_ktCO2") %>%
+    dcast(formula = ... ~ Gas + Sector, value.var = "CO2_emissions_MtCO2") %>%
     rename(year = Year, ISO3 = Country)
   
   #sapply(cur_CAIT_wide, class)
@@ -253,7 +256,7 @@ plot_function <- function(cur_ISO3){
 
 ```
 
-```{r plot_volatility, include = FALSE}
+```{r plot_volatility, echo=FALSE, results = 'asis'}
 
 plot_function("ATG")
 plot_function("BRB")
@@ -261,7 +264,75 @@ plot_function("LCA")
 
 ```
 
-## Definitions
+```{r plot_coverage, echo=FALSE, results = 'asis'}
+
+# Read counts of values by ind and year
+data_count <- as.data.table(read.csv("data_count_env.csv"))
+
+p <-  data_count %>% 
+      filter(Year >= 2000, Year <= 2020, Indicator.Code %in% cur_indicators$`Series code`) %>%
+      ggplot(aes(x = Year,
+                 y = Indicator.Code,
+                 text = Indicator.Name, 
+                 fill = count)) +
+      geom_tile() +
+  scale_fill_viridis_c(option = "A", alpha = .8,
+                       limits = c(0, 220),
+                       breaks = c(0, 50, 100, 150, 200)) +
+  labs(x = "", y = "") +
+  scale_x_continuous(breaks = c(2000:2020),
+                     # leaves some padding on either side of the heatmap - necessary for PDF versions
+                     limits=c(1999,2021),
+                     expand = c(0,0)) +
+  theme(axis.text.x = element_text(size = rel(0.8), angle = 330, hjust = 0, colour = "grey50"),
+        axis.text.y = element_text(size = rel(0.5), colour = "grey50")) 
+   
+ggplotly(p) 
+
+```
+
+## Data sources for GHG
+All sources rely on the same set of primary sources for data.
+
+* PIK PRIMAP - Potsdam Institute for Climate Impact Research
+  + All Kyoto GHGs by country, year and category
+  + *URL* https://zenodo.org/record/5494497#.YZJPvmC0uUk
+  + *Time coverage*: data from 1850-2019 (check https://zenodo.org/record/4479172#.YV765ZpNeUk published in September 2021)
+  + *Countries*: 216 countries
+  + *License*: CC BY 4.0
+* CDIAC - Carbon Dioxide Information analysis Center
+  + CO2 emissions from fossil-fuel burning, cement production, and gas flaring
+  + *URL* https://cdiac.ess-dive.lbl.gov/trends/emis/meth_reg.html
+  + *Time coverage*: data from 1751 until 2014
+  + *Countries*: ~180 (1960-1990), ~215 (1991-2014)
+  + *License*: https://cdiac.ess-dive.lbl.gov/permission.html
+* CAIT - Climate Analysis Indicators Tool (Climate Watch / World Resources Institute): 
+  + all sectors and gases
+  + *URL* https://www.climatewatchdata.org/ghg-emissions?end_year=2018&start_year=1990 
+  + *Time coverage*: data from 1990-2018
+  + *Countries*: 197 countries (parties to UNFCCC)
+  + *License*: -
+* GCP - Global Carbon Project: https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
+  + CO2 emissions from fossil fuel combustion, cement production, and bunkers.
+  + *URL* https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
+  + *Time coverage*: data from 1960-2018 
+  + *Countries*: 229 countries and regions
+  + *License*: -
+* IEA - International Energy Agency: 
+  + *URL* https://www.iea.org/data-and-statistics/data-product/greenhouse-gas-emissions-from-energy
+  + *Time coverage*: data from 1960- (OECD countries), 1971- (non-OECD countries -2019 (2020 for some countries)
+  + *Countries*: OECD countries, total 145 countries
+  + *License*: -
+  + *Notes*: Data only available after purchasing, only emissions from energy
+* UN SDG Data Portal
+  + *URL* https://unstats.un.org/sdgs/dataportal
+  + *Time coverage*: 2000-2019 for Annex I countries, 2000-2018 for non-Annnex I countries -> 78% missing values
+  + *Countries*: 43 Annex I countries and 136 non-Annex I countries
+  + *License*: -
+  + *Notes*: Only total GHG emissions without LULUCF, no disaggreation by gas or sector (Indicator 13.2.2)
+  
+## PIK data
+
 
 ### Kyoto basket greenhouse gases
 
@@ -286,9 +357,9 @@ and different sets of GWPs are used. We use the GWPs from the fourth IPCC assess
 | CH4 | 25 |
 | N2O | 298 |
 
-### Category codes
+### Sector disaggreagation
 
-Category descriptions using IPCC 1996 terminology.
+The following sector/categories are available (category descriptions using IPCC 1996 terminology).
 
 | Code   | Description                                      |
 | ------ | ------------------------------------------------ |
@@ -304,45 +375,7 @@ Category descriptions using IPCC 1996 terminology.
 | 6      | Waste                                            |
 | 7      | Other                                            |
 
-Data on LULUCF has high uncertainty and we therefore exlcude.
-
-## Data sources for GHG
-All sources rely on the same primary sources for data.
-
-* PIK PRIMAP - Potsdam Institute for Climate Impact Research
-  + All Kyoto GHGs by country, year and category
-  + *URL* https://zenodo.org/record/5494497#.YZJPvmC0uUk
-  + *Time coverage*: data from 1850-2019 (check https://zenodo.org/record/4479172#.YV765ZpNeUk published in September 2021)
-  + *Countries*: 216 countries
-  + *License*: CC BY 4.0
-* CDIAC - Carbon Dioxide Information analysis Center
-  + CO2 emissions from fossil-fuel burning, cement production, and gas flaring
-  + *URL* https://cdiac.ess-dive.lbl.gov/trends/emis/meth_reg.html
-  + *Time coverage*: data from 1751 until 2014
-  + *Countries*: ~180 (1960-1990), ~215 (1991-2014)
-  + *License*: https://cdiac.ess-dive.lbl.gov/permission.html
-* CAIT - Climate Analysis Indicators Tool (Climate Watch / World Resources Institute): 
-  + all sectors and gases
-  + *URL* https://www.climatewatchdata.org/ghg-emissions?end_year=2018&start_year=1990 
-  + *Time coverage*: data from 1990-2018
-  + *Countries*: 197 countries (parties to UNFCCC)
-  + *License*: 
-* GCP - Global Carbon Project: https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
-  + CO2 emissions from fossil fuel combustion, cement production, and bunkers.
-  + *URL* https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2018
-  + *Time coverage*: data from 1960-2018 
-  + *Countries*: 229 countries and regions
-  + *License*: 
-* IEA - International Energy Agency: 
-  + *URL* https://cdiac.ess-dive.lbl.gov/trends/emis/meth_reg.html
-  + *Time coverage*: data from 1971-2018 (until 2019 for OECD countries)
-  + *Countries*: OECD countries, total 145 countries
-  + *License*: 
-  
-### Data uncertainty
-According to the Working Group III Contribution to the IPCC Fifth Assessment Report, global CO2 emissions from fossil fuel combustion are known within *8%* uncertainty (90% confidence interval). CO2 emissions from FOLU (forestry and other land use) have very large uncertainties associated with them in the order of *± 50%*. Uncertainty for global emissions of CH4, N2O and the F-gases has been estimated as *20%*, *60%* and *20%* respectively. For the PIK dataset, regional deforestation emissions are downscaled to the country level using estimates of the deforested area obtained from potential vegetation and calculations for the needed agricultural land. Accordingly levels of uncertainty are quite high for earlier years of data (closer to 1850).
-
-## Proposal for WDI GHG emissions indicators
+Data on LULUCF has high uncertainty and we therefore exclude.
 
 ### Temporal coverage
 The dataset covers the years 1750-2019, where a considerable number of values 2019 are numerically extrapolated. As the WDI starts in 1960, only values from 1960 are considered.
@@ -377,6 +410,11 @@ The WDI includes `r nrow(WDI_countries)` of which `r sum(WDI_countries$ISO3 %in%
 kable(WDI_countries[!(ISO3 %in% PIK_countries)])
 ```
 
+### Data uncertainty
+According to the Working Group III Contribution to the IPCC Fifth Assessment Report, global CO2 emissions from fossil fuel combustion are known within *8%* uncertainty (90% confidence interval). CO2 emissions from FOLU (forestry and other land use) have very large uncertainties associated with them in the order of *± 50%*. Uncertainty for global emissions of CH4, N2O and the F-gases has been estimated as *20%*, *60%* and *20%* respectively. For the PIK dataset, regional deforestation emissions are downscaled to the country level using estimates of the deforested area obtained from potential vegetation and calculations for the needed agricultural land. Accordingly levels of uncertainty are quite high for earlier years of data (closer to 1850).
+
+## Indicator selection
+
 ### New indicators
 
 ```{r list_of_new_indicators, out.height = '200%', echo = FALSE, results='asis'}
@@ -409,22 +447,26 @@ plot(new_indicators_tree)
 
 ```
 
-### Scores of new indicators
-All 26 indicators have the same score of 3.571429 when using the dataset with extrapolated values.
 
-```{r score_of_new_indicators, echo = FALSE, results='asis'}
+<!-- ### Scores of new indicators -->
+<!-- All 26 indicators have the same score of 3.571429 when using the dataset with extrapolated values. -->
 
-# Load score_table current WDI GHG indicators
-# score_table_cur <- read.csv("current_WDI_indicators_scores.csv")
-# colnames(score_table_cur)
-# 
-# 
-# kable(new_indicators)
-```
+<!-- ```{r score_of_new_indicators, echo = FALSE, results='asis'} -->
 
-## Decisions to make
+<!-- # Load score_table current WDI GHG indicators -->
+<!-- # score_table_cur <- read.csv("current_WDI_indicators_scores.csv") -->
+<!-- # colnames(score_table_cur) -->
+<!-- #  -->
+<!-- #  -->
+<!-- # kable(new_indicators) -->
+<!-- ``` -->
+
 ### Sectors / GHG combinations
 Some sector/GHG combinations are not common as not all gases are produced in each sector. Therefore, some combinations could be dropped.
+
+Does the indicator selection serve broad users as a core set of the GHG emission series?
+
+Is this set useful for CCDR - need for additional sector disaggregation
 
 Proposal: Include the following combinations:
 
@@ -440,8 +482,6 @@ i.	CO2 – Energy
 j.	CO2 – Industrial processes
 k.	N2O – Agriculture
 l.	N2O – Waste
-
-![Overview of number of extrapolated values by indicator for the years 2017-2019](info_on_extrapolation.png)
 
 ### LUCF
 LUCF data have a higher uncertainty and can distort the series strongly.
@@ -476,7 +516,4 @@ Proposal: Include extrapolated values for completeness and update series regular
 
 Proposal: include total per capita GHG emissions and total per capita CO2 emissions
 
-## Questions
-- Does the indicator selection serve broad users as a core set of the GHG emission series? 
-- Which level of sector disaggregation is sufficient to serve the users of the WDI and how does that compare to the needs of the users of the CCDR database?
   

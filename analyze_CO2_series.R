@@ -86,6 +86,7 @@ WDI_wide <- dcast(data = WDI_long,
 WDI_wide
 
 ## PIK
+#PIK <- as.data.table(read.csv("./Data_private/PIK/Guetschow-et-al-2021-PRIMAP-hist_v2.3.1_20-Sep_2021.csv"))
 PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
 setnames(PIK, "country", "Nation")
 PIK

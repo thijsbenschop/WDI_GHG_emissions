@@ -1,0 +1,39 @@
+Talking points for meeting with Stephane Hallegatte on Thursday, May 19, 2022
+
+Objective of meeting: present proposal for reviewing GHG indicators in WDI and receive feedback, especially w.r.t. CCDR GHG indicators
+
+1) Present current indicators in WDI and shortcomings:
+- combination of CAIT data since 1990 + CDIAC data before 1960 for GHG emissions
+- other indicators from various sources
+- overview of indicators by sector/GHG
+- issues with consistency and comparability across time and indicators
+- low country coverage and time coverage for some indicators (show plot)
+- present scoring for current indicators (?)
+- issue with license and availability for IEA data
+
+2) Potential data sources
+- briefly go over different options and characteristics plus shortcomings
+- including PIK, CAIT, official SDG indicators
+- present why propose to use PIK, advantages over CAIT (time coverage, completeness) 
+
+3) Present PIK data
+- country coverage, time coverage
+- third-party series, country-reported series
+- sector disaggregation
+- GHG gases
+- update frequency
+
+4) Indicator selection
+- Combination of GHG and sectors
+- Does the indicator selection serve broad users as a core set of the GHG emission series?
+- Is this set useful for CCDR - need for additional sector disaggregation?
+- Additional indicators:
+                - per capita GHG emissions
+                - carbon intensity (CO2/GDP)
+                - % changes
+                - change from base year 1990
+
+5) Questions
+- LUCF inclusion
+- third-party vs. country-reported
+- use of extrapolated values
