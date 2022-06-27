@@ -69,7 +69,8 @@ SetNodeStyle(cur_indicators_tree$CO2, fillcolor = "Orange", penwidth = "2px", fo
 SetNodeStyle(cur_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
-SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+
+#SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 
 plot(cur_indicators_tree)
 ```
@@ -117,7 +118,7 @@ Time and country coverage of existing indicators showing that latest year of man
 
 data_count <- as.data.table(read.csv("data_count_env.csv"))
 
-   p <-  data_count %>% 
+p <-  data_count %>% 
       filter(Year >= 2000, Year <= 2020, Indicator.Code %in% cur_indicators$`Series code`) %>%
       ggplot(aes(x = Year,
                  y = Indicator.Code,
@@ -138,19 +139,18 @@ data_count <- as.data.table(read.csv("data_count_env.csv"))
   ggplotly(p) # for html_output
   #p # for github_document  
 
-render_table_coverage
-
+#render_table_coverage
 ```
 
 
 ### Issues with current data sources/indicators
 GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. Furthermore, the current series are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.
 
-Licensing issues and data availability: indicators from IEA are not distributed under a license that allows redistribution.
+Licensing issues and data availability: indicators from IEA are distributed under a license that restricts redistribution and only available until 2014.
 
 The official SDG indicators on GHG emissions are INDICATOR 9.4.1 CO2 emission per unit of value added and 
 INDICATOR 13.2.2 Total greenhouse gas emissions per year (https://unstats.un.org/sdgs/dataportal/database). 
-also licensing terms and SDGs. The respective sources are UNIDO and UNFCCC. 
+also licensing terms and SDGs. The respective sources are UNIDO and UNFCCC. Indicator 9.4.1 does not reflect 
 
 ```{r plot_WLD, echo=FALSE, warning= FALSE}
 combined_sources <- readRDS("Data/data_for_plots/combined_sources.rds")
