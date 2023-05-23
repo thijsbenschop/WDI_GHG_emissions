@@ -36,7 +36,7 @@ cur_indicators <- read_xlsx("current_WDI_indicators.xlsx")
 new_indicators <- read_xlsx("./Data/new_indicators.xlsx")
 ```
 
-This note describes the current GHG indicators in the WDI and proposes a new set of indicators using a different data source.
+This note describes the current GHG indicators in the WDI and proposes a new set of indicators using a different data source. 
 
 ## Overview of GHG indicators currently included in WDI
 
@@ -71,7 +71,11 @@ SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", font
 SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
 
 #SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+```
 
+Breakdown of current indicators by GHG and sector
+
+```{r display_cur_indicators_by_GHG_sector, fig.width=12, echo=FALSE, results = 'asis'}
 plot(cur_indicators_tree)
 ```
 
