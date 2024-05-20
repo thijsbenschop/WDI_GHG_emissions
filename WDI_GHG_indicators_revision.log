@@ -1,0 +1,27 @@
+This is XeTeX, Version 3.14159265-2.6-0.999991 (MiKTeX 2.9.7250 64-bit) (preloaded format=xelatex 2023.10.30)  27 NOV 2023 11:58
+entering extended mode
+**./WDI_GHG_indicators_revision.tex
+(WDI_GHG_indicators_revision.tex
+LaTeX2e <2019-10-01> patch level 3
+
+! LaTeX Error: File `scrartcl.cls' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: cls)
+
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.10 ^^M
+         
+Here is how much of TeX's memory you used:
+ 14 strings out of 427272
+ 263 string characters out of 3146595
+ 65619 words of memory out of 3000000
+ 4578 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 14i,0n,8p,110b,10s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+No pages of output.

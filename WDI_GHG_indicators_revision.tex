@@ -1,0 +1,737 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={WDI Greenhouse Gas Emissions indicators},
+  pdfauthor={Thijs Benschop},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{WDI Greenhouse Gas Emissions indicators}
+\author{Thijs Benschop}
+\date{11/17/23}
+
+\begin{document}
+\maketitle
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, sharp corners, enhanced, breakable, boxrule=0pt, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
+
+This note describes the current greenhouse gas (GHG) emissions
+indicators in the WDI and proposes a new set of indicators using a
+different data source. The indicators are evaluated using the inclusion
+criteria comparing the current and proposed indicators.
+
+\hypertarget{current-ghg-emissions-indicators-in-wdi}{%
+\subsection{Current GHG emissions indicators in
+WDI}\label{current-ghg-emissions-indicators-in-wdi}}
+
+Currently, 37 indicators on GHG emissions are included in the WDI. The
+proposal to revise the set of indicators and the data source is due to
+several shortcomings of the current set of indicators:
+
+\begin{itemize}
+\tightlist
+\item
+  many indicators are outdated and no longer updated by source (or not
+  available - IEA data)
+\item
+  many indicators are not reported annually and/or do not start in 1960
+\item
+  indicators from different sources cannot be compared due to different
+  definitions/units and methodologies
+\item
+  country coverage for some indicators is low
+\end{itemize}
+
+The following 37 GHG related indicators are currently in the WDI
+database:
+
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\hline
+Series code & Description & GHG & Sector & Source & Time coverage\\
+\hline
+EN.ATM.CO2E.KD.GD & CO2 emissions (kg per 2017 US\$ of GDP) & CO2 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.CO2E.KT & Total CO2 emissions (thousand metric tons of CO2 excluding Land-Use Change and Forestry) & CO2 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.CO2E.PC & CO2 emissions (metric tons per capita) & CO2 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.CO2E.PP.GD & CO2 emissions (kg per PPP \$ of GDP) & CO2 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.CO2E.PP.GD.KD & CO2 emissions (kg per 2017 PPP \$ of GDP) & CO2 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.GHGT.KT.CE & Total greenhouse gas emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) & All & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.METH.KT.CE & Total methane emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) & CH4 & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.NOXE.KT.CE & Total nitrous oxide emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry) & N2O & All & CAIT & 1990-2020\\
+\hline
+EN.ATM.METH.AG.KT.CE & Agricultural methane emissions (thousand metric tons of CO2 equivalent) & CH4 & Agriculture & CAIT & 1990-2020\\
+\hline
+EN.ATM.NOXE.AG.KT.CE & Agricultural nitrous oxide emissions (thousand metric tons of CO2 equivalent) & N2O & Agriculture & CAIT & 1990-2020\\
+\hline
+EN.ATM.METH.EG.KT.CE & Methane emissions in energy sector (thousand metric tons of CO2 equivalent) & CH4 & Energy & CAIT & 1990-2020\\
+\hline
+EN.ATM.NOXE.EG.KT.CE & Nitrous oxide emissions in energy sector (thousand metric tons of CO2 equivalent) & N2O & Energy & CAIT & 1990-2020\\
+\hline
+EN.ATM.CO2E.EG.ZS & CO2 intensity (kg per kg of oil equivalent energy use) & CO2 & Energy & CDIAC & 1990-2015\\
+\hline
+EN.ATM.CO2E.GF.KT & CO2 emissions from gaseous fuel consumption (kt) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.CO2E.GF.ZS & CO2 emissions from gaseous fuel consumption (\% of total) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.CO2E.LF.KT & CO2 emissions from liquid fuel consumption (kt) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.CO2E.LF.ZS & CO2 emissions from liquid fuel consumption (\% of total) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.CO2E.SF.KT & CO2 emissions from solid fuel consumption (kt) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.CO2E.SF.ZS & CO2 emissions from solid fuel consumption (\% of total) & CO2 & Energy & CDIAC & 1960-2016\\
+\hline
+EN.ATM.GHGO.KT.CE & Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2 equivalent) & Fluorinated gases & All & EDGAR (EC JRC/PBL) & 1970-2016 (not annual)\\
+\hline
+EN.ATM.GHGO.ZG & Other greenhouse gas emissions (\% change from 1990) & Fluorinated gases & All & EDGAR (EC JRC/PBL) & 1991-2012\\
+\hline
+EN.ATM.GHGT.ZG & Total greenhouse gas emissions (\% change from 1990) & All & All & EDGAR (EC JRC/PBL) & 1991-2012\\
+\hline
+EN.ATM.HFCG.KT.CE & HFC gas emissions (thousand metric tons of CO2 equivalent) & Fluorinated gases & All & EDGAR (EC JRC/PBL) & 1990-2010 (not annual)\\
+\hline
+EN.ATM.METH.ZG & Methane emissions (\% change from 1990) & CH4 & All & EDGAR (EC JRC/PBL) & 1991-2012\\
+\hline
+EN.ATM.NOXE.ZG & Nitrous oxide emissions (\% change from 1990) & N2O & All & EDGAR (EC JRC/PBL) & 1991-2012\\
+\hline
+EN.ATM.PFCG.KT.CE & PFC gas emissions (thousand metric tons of CO2 equivalent) & Fluorinated gases & All & EDGAR (EC JRC/PBL) & 1990-2010 (not annual)\\
+\hline
+EN.ATM.SF6G.KT.CE & SF6 gas emissions (thousand metric tons of CO2 equivalent) & Fluorinated gases & All & EDGAR (EC JRC/PBL) & 1990-2010 (not annual)\\
+\hline
+EN.ATM.NOXE.AG.ZS & Agricultural nitrous oxide emissions (\% of total) & N2O & Agriculture & EDGAR (EC JRC/PBL) & 1970-2008\\
+\hline
+EN.ATM.METH.AG.ZS & Agricultural methane emissions (\% of total) & CH4 & Energy & EDGAR (EC JRC/PBL) & 1970-2008\\
+\hline
+EN.ATM.METH.EG.ZS & Energy related methane emissions (\% of total) & CH4 & Energy & EDGAR (EC JRC/PBL) & 1970-2008\\
+\hline
+EN.ATM.NOXE.EG.ZS & Nitrous oxide emissions in energy sector (\% of total) & N2O & Energy & EDGAR (EC JRC/PBL) & 1970-2008\\
+\hline
+EN.CO2.BLDG.ZS & CO2 emissions from residential buildings and commercial and public services (\% of total fuel combustion) & CO2 & Other & IEA & 1960-2014\\
+\hline
+EN.CO2.ETOT.ZS & CO2 emissions from electricity and heat production, total (\% of total fuel combustion) & CO2 & Other & IEA & 1960-2014\\
+\hline
+EN.CO2.MANF.ZS & CO2 emissions from manufacturing industries and construction (\% of total fuel combustion) & CO2 & Other & IEA & 1960-2014\\
+\hline
+EN.CO2.OTHX.ZS & CO2 emissions from other sectors, excluding residential buildings and commercial and public services (\% of total fuel combustion) & CO2 & Other & IEA & 1960-2014\\
+\hline
+EN.CO2.TRAN.ZS & CO2 emissions from transport (\% of total fuel combustion) & CO2 & Other & IEA & 1960-2014\\
+\hline
+EN.CLC.GHGR.MT.CE & GHG net emissions removals by LUCF (Mt of CO2 equivalent) & All & LUCF & UNFCCCC & 1990-2009\\
+\hline
+\end{tabu}
+
+\hypertarget{list-of-proposed-indicators}{%
+\subsection{List of proposed
+indicators}\label{list-of-proposed-indicators}}
+
+Based on the current selection of indicators included in the WDI as well
+as the available time series in the PRIMAP-hist dataset and the
+relevance of indicators to the WDI audience, it is proposed to include
+the following set of indicators in the WDI. All indicators have data
+from 1960 until 2022. For some countries and gases the values for 2022
+are extrapolated.
+
+\begin{tabu} to \linewidth {>{\raggedleft}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\hline
+Number & Indicator Code & Indicator Name & Gases & Sector & Type\\
+\hline
+1 & EN.GHG.TOTL.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) & KYOTOGHG (AR4GWP100) & National Total excluding LULUCF & absolute emissions\\
+\hline
+2 & EN.GHG.CO2E.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) & CO2 & National Total excluding LULUCF & absolute emissions\\
+\hline
+3 & EN.GHG.METH.KT.CE & Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) & CH4 & National Total excluding LULUCF & absolute emissions\\
+\hline
+4 & EN.GHG.NOXE.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) & N2O & National Total excluding LULUCF & absolute emissions\\
+\hline
+5 & EN.GHG.FGAS.KT.CE & Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF) & FGASES (AR4GWP100) & National Total excluding LULUCF & absolute emissions\\
+\hline
+6 & EN.GHG.TOTL.AG.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Sector = Agriculture) & KYOTOGHG (AR4GWP100) & Agriculture & absolute emissions\\
+\hline
+7 & EN.GHG.TOTL.EG.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Sector = Energy) & KYOTOGHG (AR4GWP100) & Energy & absolute emissions\\
+\hline
+8 & EN.GHG.TOTL.IN.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Sector = Industrial Processes and Product Use) & KYOTOGHG (AR4GWP100) & Industrial Processes and Product Use & absolute emissions\\
+\hline
+9 & EN.GHG.TOTL.OT.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Sector = Other) & KYOTOGHG (AR4GWP100) & Other & absolute emissions\\
+\hline
+10 & EN.GHG.TOTL.WA.KT.CE & Greenhouse gas emissions: All Kyoto Gases (Sector = Waste) & KYOTOGHG (AR4GWP100) & Waste & absolute emissions\\
+\hline
+11 & EN.GHG.CO2E.AG.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Agriculture) & CO2 & Agriculture & absolute emissions\\
+\hline
+12 & EN.GHG.CO2E.EG.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Energy) & CO2 & Energy & absolute emissions\\
+\hline
+13 & EN.GHG.CO2E.IN.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Industrial Processes and Product Use) & CO2 & Industrial Processes and Product Use & absolute emissions\\
+\hline
+14 & EN.GHG.CO2E.OT.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Other) & CO2 & Other & absolute emissions\\
+\hline
+15 & EN.GHG.CO2E.WA.KT & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Waste) & CO2 & Waste & absolute emissions\\
+\hline
+16 & EN.GHG.METH.AG.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = Agriculture) & CH4 & Agriculture & absolute emissions\\
+\hline
+17 & EN.GHG.METH.EG.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = Energy) & CH4 & Energy & absolute emissions\\
+\hline
+18 & EN.GHG.METH.IN.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = Industrial Processes and Product Use) & CH4 & Industrial Processes and Product Use & absolute emissions\\
+\hline
+19 & EN.GHG.METH.OT.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = Other) & CH4 & Other & absolute emissions\\
+\hline
+20 & EN.GHG.METH.WA.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = Waste) & CH4 & Waste & absolute emissions\\
+\hline
+21 & EN.GHG.NOXE.AG.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Agriculture) & N2O & Agriculture & absolute emissions\\
+\hline
+22 & EN.GHG.NOXE.EG.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Energy) & N2O & Energy & absolute emissions\\
+\hline
+23 & EN.GHG.NOXE.IN.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Industrial Processes and Product Use) & N2O & Industrial Processes and Product Use & absolute emissions\\
+\hline
+24 & EN.GHG.NOXE.OT.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Other) & N2O & Other & absolute emissions\\
+\hline
+25 & EN.GHG.NOXE.WA.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Waste) & N2O & Waste & absolute emissions\\
+\hline
+26 & EN.GHG.FGAS.IN.KT.CE & Greenhouse gas emissions: Fluorinated Gases (Sector = Industrial Processes and Product Use) & FGASES (AR4GWP100) & Industrial Processes and Product Use & absolute emissions\\
+\hline
+27 & EN.GHG.CO2E.LU.KT.CE & Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = LULUCF) & CO2 & Land Use, Land Use Change, and Forestry & absolute emissions\\
+\hline
+28 & EN.GHG.METH.LU.KT.CE & Greenhouse gas emissions: Methane (CH4) (Sector = LULUCF) & CH4 & Land Use, Land Use Change, and Forestry & absolute emissions\\
+\hline
+29 & EN.GHG.NOXE.LU.KT.CE & Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = LULUCF) & N2O & Land Use, Land Use Change, and Forestry & absolute emissions\\
+\hline
+30 & EN.GHG.TOTL.PC & Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per capita & KYOTOGHG (AR4GWP100) & National Total excluding LULUCF & per capita\\
+\hline
+31 & EN.GHG.CO2E.PC & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per capita & CO2 & National Total excluding LULUCF & per capita\\
+\hline
+32 & EN.GHG.TOTL.PP.GD & Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2017 PPP \$ of GDP & KYOTOGHG (AR4GWP100) & National Total excluding LULUCF & per GDP\\
+\hline
+33 & EN.GHG.CO2E.PP.GD & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2017 PPP \$ of GDP & CO2 & National Total excluding LULUCF & per GDP\\
+\hline
+34 & EN.GHG.TOTL.KD.GD & Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2017 US\$ of GDP & KYOTOGHG (AR4GWP100) & National Total excluding LULUCF & per GDP\\
+\hline
+35 & EN.GHG.CO2E.KD.GD & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2017 US \$ of GDP & CO2 & National Total excluding LULUCF & per GDP\\
+\hline
+36 & EN.GHG.TOTL.ZG & Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) \% change from 1990 & KYOTOGHG (AR4GWP100) & National Total excluding LULUCF & \% change\\
+\hline
+37 & EN.GHG.CO2E.ZG & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) \% change from 1990 & CO2 & National Total excluding LULUCF & \% change\\
+\hline
+38 & EN.GHG.METH.ZG & Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) \% change from 1990 & CH4 & National Total excluding LULUCF & \% change\\
+\hline
+39 & EN.GHG.N2OX.ZG & Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) \% change from 1990 & N2O & National Total excluding LULUCF & \% change\\
+\hline
+40 & EN.GHG.CO2E.ZS & Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) share of total GHG emissions & CO2 & National Total excluding LULUCF & share of total\\
+\hline
+41 & EN.GHG.METH.ZS & Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) share of total GHG emissions & CH4 & National Total excluding LULUCF & share of total\\
+\hline
+42 & EN.GHG.N2OX.ZS & Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) share of total GHG emissions & N2O & National Total excluding LULUCF & share of total\\
+\hline
+43 & EN.GHG.FGAS.ZS & Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF) share of total GHG emissions & FGASES (AR4GWP100) & National Total excluding LULUCF & share of total\\
+\hline
+\end{tabu}
+
+\hypertarget{description-of-data-source}{%
+\subsection{Description of data
+source}\label{description-of-data-source}}
+
+The PRIMAP-hist dataset, developed and published by the Potsdam
+Institute for Climate Impact Research (PIK, see
+https://www.pik-potsdam.de/en/home) in Germany, a non-profit
+organization conducting research on climate change, contains historical
+greenhouse gas emissions since 1750. The dataset includes emissions
+aggregated by country (200+ countries), category/sector (IPCC 2006
+categories for emissions) and greenhouse gas/entity (all Kyoto GHGs).
+The dataset is regularly updated and currently has a lag of one (1) year
+(data available until 2022, published in October 2023). The dataset is
+compiled from several other public data sets (see methodology).
+
+The methodology to make the data from various sources comparable is
+described in this paper: Gütschow, J.; Jeffery, L.; Gieseke, R.; Gebel,
+R.; Stevens, D.; Krapp, M.; Rocha, M. (2016): The PRIMAP-hist national
+historical emissions time series, Earth Syst. Sci. Data, 8, 571-603,
+doi:10.5194/essd-8-571-2016.
+
+The dataset is compiled using data from the following sources:
+
+\begin{itemize}
+\tightlist
+\item
+  Global CO2 emissions from cement production v220919 (Andrew 2022)
+\item
+  BP Statistical Review of World Energy website: Energy Institute (2023)
+\item
+  CDIAC data: Boden et al.~(2017): Gilfillan et al.~(2020), paper
+  Gilfillan and Marland (2021)
+\item
+  EDGAR version 7.0: data, website, Reports: JRC (2022), JRC (2021)
+\item
+  EDGAR-HYDE 1.4 data: Van Aardenne et al.~(2001), Olivier and Berdowski
+  (2001)
+\item
+  FAOSTAT database data: Food and Agriculture Organization of the United
+  Nations (2023)
+\item
+  RCP historical data data, paper: Meinshausen et al.~(2011)
+\item
+  UNFCCC National Communications and National Inventory Reports for
+  developing countries
+\item
+  UNFCCC Biennial Update Reports, National Communications, and National
+  Inventory Reports for developing countries
+\item
+  UNFCCC Common Reporting Format (CRF)
+\item
+  Official country repositories (non-UNFCCC) for Taiwan, South Korea
+\end{itemize}
+
+\hypertarget{relevance-to-development}{%
+\subsection{Relevance to development}\label{relevance-to-development}}
+
+Global warming and climate change impact development in a multitude of
+ways. Climate change changes the availability of water, the prevalence
+of extreme weather events such as floods and droughts and warms and
+rises the oceans. This has immediate impacts on food security, health,
+poverty, displacement and biodiversity. Greenhouse gas emissions
+contribute to global warming and therefore measures of greenhouse gas
+emissions, by greenhouse gas, by country, over time and by sector is
+pivotal to understanding climate change.
+
+\hypertarget{high-quality}{%
+\subsection{High quality}\label{high-quality}}
+
+\hypertarget{source}{%
+\subsubsection{Source}\label{source}}
+
+The PRIMAP-hist data series is disseminated under the \textbf{Creative
+Commons Attribution 4.0 International (CC BY 4.0) license}. This license
+allows to redistribute the material in any medium or format and adapt as
+well, as long as appropriate credit is given and indicate if any changes
+were made.
+
+The most recent release was on October 15, 2023. Since the 2022 release,
+the time lag is only one year.
+
+Latest version, released October 15, 2023: \textbf{Gütschow, J., \&
+Pflüger, M. (2023). The PRIMAP-hist national historical emissions time
+series (1750-2022) v2.5 (2.5) {[}Data set{]}. Zenodo.
+https://doi.org/10.5281/zenodo.10006301}
+
+The first version of the dataset was released in 2016, with regular
+releases since.
+
+Earlier versions:
+
+Released Mar 15, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist
+national historical emissions time series v2.4.2 (1750-2021). zenodo.
+doi:10.5281/zenodo.7727475.
+
+Released Feb 20, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist
+national historical emissions time series v2.4.1 (1750-2021). zenodo.
+doi:10.5281/zenodo.7585420.
+
+Released October 17, 2022: Gütschow, J.; Pflüger, M. (2022): The
+PRIMAP-hist national historical emissions time series v2.4 (1750-2021).
+zenodo. doi:10.5281/zenodo.7179775.
+
+Released September 22, 2021: Gütschow, J.; Günther, A.; Pflüger, M.
+(2021): The PRIMAP-hist national historical emissions time series
+(1750-2019). v2.3.1. zenodo. https://doi.org/10.5281/zenodo.5494497
+
+Released August 30, 2021: Gütschow, J.; Günther, A.; Pflüger, M. (2021):
+The PRIMAP-hist national historical emissions time series v2.3
+(1850-2019). zenodo. doi:10.5281/zenodo.5175154.
+
+Released February 9, 2021: Gütschow, J.; Günther, A.; Jeffery, L.;
+Gieseke, R. (2021): The PRIMAP-hist national historical emissions time
+series v2.2 (1850-2018). zenodo. doi:10.5281/zenodo.4479172.
+
+Gütschow, Johannes; Jeffery, Louise; Gieseke, Robert; Günther, Annika
+(2019): The PRIMAP-hist national historical emissions time series
+(1850-2017). v2.1. GFZ Data Services.
+https://doi.org/10.5880/PIK.2019.018.
+
+Gütschow, J., Jeffery, M. L., Gieseke, R., Gebel, R., Stevens, D.,
+Krapp, M., and Rocha, M. (2016): The PRIMAP-hist national historical
+emissions time series, Earth Syst. Sci. Data, 8, 571--603,
+https://doi.org/10.5194/essd-8-571-2016.
+
+Using one source for all GHG indicators guarantees comparability across
+indicators.
+
+\hypertarget{unique-visitors}{%
+\subsubsection{Unique visitors}\label{unique-visitors}}
+
+No data on number of unique visitors for new series. The latest version
+of the PRIMAP-hist data was dowmloaded 14,000 times in the first month
+after publication. The data is also available on the
+\href{https://www.climatewatchdata.org/ghg-emissions}{Climate Watch
+(CAIT)} website.
+
+Improved data quality and coverage can increase the number of unique
+visitors of the GHG indicators in WDI.
+
+\hypertarget{methodology}{%
+\subsection{Methodology}\label{methodology}}
+
+Copied from https://zenodo.org/record/7585420
+
+The PRIMAP-hist dataset combines several published datasets to create a
+comprehensive set of greenhouse gas emission pathways for every country
+and Kyoto gas, covering the years 1750 to 2021, and almost all UNFCCC
+(United Nations Framework Convention on Climate Change) member states as
+well as most non-UNFCCC territories. The data resolves the main IPCC
+(Intergovernmental Panel on Climate Change) 2006 categories. For CO2,
+CH4, and N2O subsector data for Energy, Industrial Processes and Product
+Use (IPPU), and Agriculture are available. The ``country reported data
+priority'' (CR) scenario of the PRIMAP-hist datset prioritizes data that
+individual countries report to the UNFCCC. For developed countries,
+AnnexI in terms of the UNFCCC, this is the data submitted anually in the
+``common reporting format'' (CRF). For developing countries, non-AnnexI
+in terms of the UNFCCC, this is the data available through the UNFCCC DI
+interface (di.unfccc.int) with additional country submissions read from
+pdf and where available xls(x) or csv files. For a list of these
+submissions please see below. For South Korea the 2021 official GHG
+inventory has not yet been submitted to the UNFCCC but is included in
+PRIMAP-hist. PRIMAP-hist also includes official data for Taiwan which is
+not recognized as a party to the UNFCCC.
+
+Gaps in the country reported data are filled using third party data such
+as CDIAC, BP (fossil CO2), Andrew cement emissions data (cement),
+FAOSTAT (agriculture), and EDGAR v7.0 (all sectors). Lower priority data
+are harmonized to higher priority data in the gap-filling process.
+
+For the third party priority time series gaps in the third party data
+are filled from country reported data sources.
+
+Data for earlier years which are not available in the above mentioned
+sources are sourced from EDGAR-HYDE, CEDS, and RCP (N2O only) historical
+emissions.
+
+The v2.4 release of PRIMAP-hist reduced the time-lag from 2 to 1 years.
+Thus we include data for 2021 while the 2.3.1 version included data for
+2019 only. For energy CO\(_2\) growth rates from the BP statistical
+review of world energy are used to extend the country reported (CR) or
+CDIAC (TP) data to 2021. For CO\(_2\) from cement production Andrew
+cement data are used. For other gases and sectors, EDGAR 7.0 is used in
+PRIMAP-hist v2.4.1 (v2,4 had to rely on numerical methods ).
+
+Version 2.4.1 of the PRIMAP-hist dataset does not include emissions from
+Land Use, Land-Use Change, and Forestry (LULUCF) in the main file.
+LULUCF data are included in the file with increased number of
+significant digits and have to be used with care as they are constructed
+from different sources using different methodologies and are not
+harmonized.
+
+Notes
+
+\begin{itemize}
+\tightlist
+\item
+  Emissions from international aviation and shipping are not included in
+  the dataset.
+\item
+  Emissions from Land Use, Land-Use Change, and Forestry (LULUCF) are
+  not included in the main version of this dataset. They are included in
+  the version without rounding as users need to take extra care when
+  using LULUCF data because changes some of the year-to-year changes in
+  the data come from using different sources or methodology changes
+  within a source rather than changes in actual emissions.
+\end{itemize}
+
+\hypertarget{adequate-coverage}{%
+\subsection{Adequate coverage}\label{adequate-coverage}}
+
+For the PRIMAP-hist data coverage is the same for all indicators, as
+data has been imputed where necessary.
+
+For the current indicators, coverage depends on the source of the
+indicator.
+
+\hypertarget{number-of-economies}{%
+\subsubsection{Number of economies}\label{number-of-economies}}
+
+\textbf{PRIMAP-hist}
+
+The WDI includes 217 countries of which 198 are included in the
+PRIMAP-hist dataset. The country coverage for the PRIMAP-hist data is 91
+percent.
+
+The following WDI countries are not included in the PRIMAP-hist dataset.
+Note that most of these countries are overseas territories, which are
+likely included in the total of the country or economy they belong to
+(exceptions are West Bank and Gaza and Kosovo).
+
+\begin{tabular}{l|l}
+\hline
+long\_name & ISO3\\
+\hline
+American Samoa & ASM\\
+\hline
+Bermuda & BMU\\
+\hline
+Cayman Islands & CYM\\
+\hline
+Channel Islands & CHI\\
+\hline
+Curacao & CUW\\
+\hline
+Faroe Islands & FRO\\
+\hline
+French Polynesia & PYF\\
+\hline
+Gibraltar & GIB\\
+\hline
+Greenland & GRL\\
+\hline
+Guam & GUM\\
+\hline
+Isle of Man & IMN\\
+\hline
+Kosovo & XKX\\
+\hline
+New Caledonia & NCL\\
+\hline
+Northern Mariana Islands & MNP\\
+\hline
+Puerto Rico & PRI\\
+\hline
+Sint Maarten (Dutch part) & SXM\\
+\hline
+St. Martin (French part) & MAF\\
+\hline
+Virgin Islands (U.S.) & VIR\\
+\hline
+West Bank and Gaza & PSE\\
+\hline
+\end{tabular}
+
+\hypertarget{share-of-low-and-middle-income-countries}{%
+\subsubsection{Share of low and middle income
+countries}\label{share-of-low-and-middle-income-countries}}
+
+\textbf{PRIMAP-hist}
+
+The PIK data include 132 LMIC countries, which is 99 percent of the
+total LMIC countries in WDI.
+
+\hypertarget{absolute-latest-year}{%
+\subsubsection{Absolute latest year}\label{absolute-latest-year}}
+
+\textbf{PRIMAP-hist}
+
+The absolute latest year in the PIK data is 2022.
+
+\hypertarget{median-latest-year}{%
+\subsubsection{Median latest year}\label{median-latest-year}}
+
+\textbf{PRIMAP-hist}
+
+The median latest year in the PIK data is 2022. This is the same for the
+data without extrapolation.
+
+\hypertarget{span-of-years}{%
+\subsubsection{Span of years}\label{span-of-years}}
+
+\textbf{PRIMAP-hist}
+
+The span of years in the PIK data is 63. Data is available from 1750,
+but this is not relevant for the WDI.
+
+\hypertarget{non-missing-data}{%
+\subsubsection{Non-missing data}\label{non-missing-data}}
+
+Time and country coverage of existing indicators showing that latest
+year of many indicators is 2014 or 2018 and country coverage is low for
+some indicators.
+
+\hypertarget{additional-issuesquestions-for-consideration}{%
+\subsection{Additional issues/questions for
+consideration}\label{additional-issuesquestions-for-consideration}}
+
+\hypertarget{issues-with-current-data-sourcesindicators}{%
+\subsubsection{Issues with current data
+sources/indicators}\label{issues-with-current-data-sourcesindicators}}
+
+The CAIT data are more volatile and the volatility does not always have
+explaining factors. Volatility partially occurs because of the way the
+series is compiled by CAIT. CAIT (and other sources) compile their
+series using different primary sources. The sources can be broadly
+divided into country-reported data and third-party data. Differences
+between these two sources can be large and CAIT fills missing data from
+one source with missing data from another sources, which explains in
+part the observed volatility in the data. CAIT does not use official
+inventories reported to UNFCCC, PIK does for countries where available.
+
+Licensing issues and data availability: indicators from IEA are
+distributed under a license that restricts redistribution and only
+available until 2014.
+
+The official SDG indicators on GHG emissions are
+
+\begin{itemize}
+\tightlist
+\item
+  INDICATOR 9.4.1 CO2 emission per unit of value added and;
+\item
+  INDICATOR 13.2.2 Total greenhouse gas emissions per year
+\end{itemize}
+
+See https://unstats.un.org/sdgs/dataportal/database. The respective
+sources are UNIDO and UNFCCC.
+
+
+
+\end{document}
