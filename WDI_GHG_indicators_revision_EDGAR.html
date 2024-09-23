@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Thijs Benschop">
+
+<title>WDI Greenhouse Gas Emissions indicators</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/clipboard/clipboard.min.js"></script>
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/quarto.js"></script>
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/popper.min.js"></script>
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/anchor.min.js"></script>
+<link href="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="WDI_GHG_indicators_revision_EDGAR_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="WDI_GHG_indicators_revision_EDGAR_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="WDI_GHG_indicators_revision_EDGAR_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="WDI_GHG_indicators_revision_EDGAR_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="WDI_GHG_indicators_revision_EDGAR_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#current-ghg-emissions-indicators-in-wdi" id="toc-current-ghg-emissions-indicators-in-wdi" class="nav-link active" data-scroll-target="#current-ghg-emissions-indicators-in-wdi">Current GHG emissions indicators in WDI</a></li>
+  <li><a href="#list-of-proposed-indicators" id="toc-list-of-proposed-indicators" class="nav-link" data-scroll-target="#list-of-proposed-indicators">List of proposed indicators</a></li>
+  <li><a href="#description-of-data-source" id="toc-description-of-data-source" class="nav-link" data-scroll-target="#description-of-data-source">Description of data source</a></li>
+  <li><a href="#relevance-to-development" id="toc-relevance-to-development" class="nav-link" data-scroll-target="#relevance-to-development">Relevance to development</a></li>
+  <li><a href="#high-quality" id="toc-high-quality" class="nav-link" data-scroll-target="#high-quality">High quality</a>
+  <ul class="collapse">
+  <li><a href="#source" id="toc-source" class="nav-link" data-scroll-target="#source">Source</a></li>
+  <li><a href="#unique-visitors" id="toc-unique-visitors" class="nav-link" data-scroll-target="#unique-visitors">Unique visitors</a></li>
+  </ul></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#adequate-coverage" id="toc-adequate-coverage" class="nav-link" data-scroll-target="#adequate-coverage">Adequate coverage</a>
+  <ul class="collapse">
+  <li><a href="#number-of-economies" id="toc-number-of-economies" class="nav-link" data-scroll-target="#number-of-economies">Number of economies</a></li>
+  <li><a href="#share-of-low-and-middle-income-countries" id="toc-share-of-low-and-middle-income-countries" class="nav-link" data-scroll-target="#share-of-low-and-middle-income-countries">Share of low and middle income countries</a></li>
+  <li><a href="#absolute-latest-year" id="toc-absolute-latest-year" class="nav-link" data-scroll-target="#absolute-latest-year">Absolute latest year</a></li>
+  <li><a href="#median-latest-year" id="toc-median-latest-year" class="nav-link" data-scroll-target="#median-latest-year">Median latest year</a></li>
+  <li><a href="#span-of-years" id="toc-span-of-years" class="nav-link" data-scroll-target="#span-of-years">Span of years</a></li>
+  <li><a href="#non-missing-data" id="toc-non-missing-data" class="nav-link" data-scroll-target="#non-missing-data">Non-missing data</a></li>
+  </ul></li>
+  <li><a href="#additional-issuesquestions-for-consideration" id="toc-additional-issuesquestions-for-consideration" class="nav-link" data-scroll-target="#additional-issuesquestions-for-consideration">Additional issues/questions for consideration</a>
+  <ul class="collapse">
+  <li><a href="#issues-with-current-data-sourcesindicators" id="toc-issues-with-current-data-sourcesindicators" class="nav-link" data-scroll-target="#issues-with-current-data-sourcesindicators">Issues with current data sources/indicators</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">WDI Greenhouse Gas Emissions indicators</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Thijs Benschop </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">6/3/24</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This note describes the current greenhouse gas (GHG) emissions indicators in the WDI and proposes a new set of indicators using a different data source (EDGAR). The indicators are evaluated using the inclusion criteria comparing the current and proposed indicators. An earlier proposal was made for replacing GHG indicators in WDI using PIK data. However, as the EDGAR data is used for the Corporate Scorecard (CSC) indicators, this proposal suggests using the same data source as the CSC indicators.</p>
+<section id="current-ghg-emissions-indicators-in-wdi" class="level2">
+<h2 class="anchored" data-anchor-id="current-ghg-emissions-indicators-in-wdi">Current GHG emissions indicators in WDI</h2>
+<p>Currently, 37 indicators on GHG emissions are included in the WDI. The proposal to revise the set of indicators and the data source is due to several shortcomings of the current set of indicators:</p>
+<ul>
+<li>many indicators are outdated and no longer updated by source (or not available - IEA data)</li>
+<li>many indicators are not reported annually and/or do not start in 1960</li>
+<li>indicators from different sources cannot be compared due to different definitions/units and methodologies</li>
+<li>country coverage for some indicators is low</li>
+</ul>
+<p>The following 37 GHG related indicators are currently in the WDI database:</p>
+<table class="table caption-top" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Series code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">GHG</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Sector</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Source</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Time coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.KD.GD</td>
+<td style="text-align: left;">CO2 emissions (kg per 2017 US$ of GDP)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.CO2E.KT</td>
+<td style="text-align: left;">Total CO2 emissions (thousand metric tons of CO2 excluding Land-Use Change and Forestry)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.PC</td>
+<td style="text-align: left;">CO2 emissions (metric tons per capita)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.CO2E.PP.GD</td>
+<td style="text-align: left;">CO2 emissions (kg per PPP $ of GDP)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.PP.GD.KD</td>
+<td style="text-align: left;">CO2 emissions (kg per 2017 PPP $ of GDP)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.GHGT.KT.CE</td>
+<td style="text-align: left;">Total greenhouse gas emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry)</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.METH.KT.CE</td>
+<td style="text-align: left;">Total methane emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.NOXE.KT.CE</td>
+<td style="text-align: left;">Total nitrous oxide emissions (thousand metric tons of CO2 equivalent excluding Land-Use Change and Forestry)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.METH.AG.KT.CE</td>
+<td style="text-align: left;">Agricultural methane emissions (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">Agriculture</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.NOXE.AG.KT.CE</td>
+<td style="text-align: left;">Agricultural nitrous oxide emissions (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">Agriculture</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.METH.EG.KT.CE</td>
+<td style="text-align: left;">Methane emissions in energy sector (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.NOXE.EG.KT.CE</td>
+<td style="text-align: left;">Nitrous oxide emissions in energy sector (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CAIT</td>
+<td style="text-align: left;">1990-2020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.EG.ZS</td>
+<td style="text-align: left;">CO2 intensity (kg per kg of oil equivalent energy use)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1990-2015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.CO2E.GF.KT</td>
+<td style="text-align: left;">CO2 emissions from gaseous fuel consumption (kt)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.GF.ZS</td>
+<td style="text-align: left;">CO2 emissions from gaseous fuel consumption (% of total)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.CO2E.LF.KT</td>
+<td style="text-align: left;">CO2 emissions from liquid fuel consumption (kt)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.LF.ZS</td>
+<td style="text-align: left;">CO2 emissions from liquid fuel consumption (% of total)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.CO2E.SF.KT</td>
+<td style="text-align: left;">CO2 emissions from solid fuel consumption (kt)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.CO2E.SF.ZS</td>
+<td style="text-align: left;">CO2 emissions from solid fuel consumption (% of total)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">CDIAC</td>
+<td style="text-align: left;">1960-2016</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.GHGO.KT.CE</td>
+<td style="text-align: left;">Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">Fluorinated gases</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1970-2016 (not annual)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.GHGO.ZG</td>
+<td style="text-align: left;">Other greenhouse gas emissions (% change from 1990)</td>
+<td style="text-align: left;">Fluorinated gases</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1991-2012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.GHGT.ZG</td>
+<td style="text-align: left;">Total greenhouse gas emissions (% change from 1990)</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1991-2012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.HFCG.KT.CE</td>
+<td style="text-align: left;">HFC gas emissions (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">Fluorinated gases</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1990-2010 (not annual)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.METH.ZG</td>
+<td style="text-align: left;">Methane emissions (% change from 1990)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1991-2012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.NOXE.ZG</td>
+<td style="text-align: left;">Nitrous oxide emissions (% change from 1990)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1991-2012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.PFCG.KT.CE</td>
+<td style="text-align: left;">PFC gas emissions (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">Fluorinated gases</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1990-2010 (not annual)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.SF6G.KT.CE</td>
+<td style="text-align: left;">SF6 gas emissions (thousand metric tons of CO2 equivalent)</td>
+<td style="text-align: left;">Fluorinated gases</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1990-2010 (not annual)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.NOXE.AG.ZS</td>
+<td style="text-align: left;">Agricultural nitrous oxide emissions (% of total)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">Agriculture</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1970-2008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.METH.AG.ZS</td>
+<td style="text-align: left;">Agricultural methane emissions (% of total)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1970-2008</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.ATM.METH.EG.ZS</td>
+<td style="text-align: left;">Energy related methane emissions (% of total)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1970-2008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.ATM.NOXE.EG.ZS</td>
+<td style="text-align: left;">Nitrous oxide emissions in energy sector (% of total)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left;">Energy</td>
+<td style="text-align: left; min-width: 2in;">EDGAR (EC JRC/PBL)</td>
+<td style="text-align: left;">1970-2008</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.CO2.BLDG.ZS</td>
+<td style="text-align: left;">CO2 emissions from residential buildings and commercial and public services (% of total fuel combustion)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left; min-width: 2in;">IEA</td>
+<td style="text-align: left;">1960-2014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.CO2.ETOT.ZS</td>
+<td style="text-align: left;">CO2 emissions from electricity and heat production, total (% of total fuel combustion)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left; min-width: 2in;">IEA</td>
+<td style="text-align: left;">1960-2014</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.CO2.MANF.ZS</td>
+<td style="text-align: left;">CO2 emissions from manufacturing industries and construction (% of total fuel combustion)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left; min-width: 2in;">IEA</td>
+<td style="text-align: left;">1960-2014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.CO2.OTHX.ZS</td>
+<td style="text-align: left;">CO2 emissions from other sectors, excluding residential buildings and commercial and public services (% of total fuel combustion)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left; min-width: 2in;">IEA</td>
+<td style="text-align: left;">1960-2014</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EN.CO2.TRAN.ZS</td>
+<td style="text-align: left;">CO2 emissions from transport (% of total fuel combustion)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">Other</td>
+<td style="text-align: left; min-width: 2in;">IEA</td>
+<td style="text-align: left;">1960-2014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EN.CLC.GHGR.MT.CE</td>
+<td style="text-align: left;">GHG net emissions removals by LUCF (Mt of CO2 equivalent)</td>
+<td style="text-align: left;">All</td>
+<td style="text-align: left;">LUCF</td>
+<td style="text-align: left; min-width: 2in;">UNFCCCC</td>
+<td style="text-align: left;">1990-2009</td>
+</tr>
+</tbody>
+</table>
+
+
+<!-- Breakdown of current indicators by GHG and sector -->
+</section>
+<section id="list-of-proposed-indicators" class="level2">
+<h2 class="anchored" data-anchor-id="list-of-proposed-indicators">List of proposed indicators</h2>
+<p>Based on the current selection of indicators included in the WDI as well as the available time series in the EDGAR dataset and the relevance of indicators to the WDI audience, it is proposed to include the following set of indicators in the WDI. All indicators have data from 1970 until 2022, except for the LULUCF indicators (2000-2022). For some countries and gases the values for 2022 are extrapolated.</p>
+<table class="table caption-top" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Number</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Indicator Code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Indicator Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Gases</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Sector</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">EN.GHG.TOTL.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">EN.GHG.CO2E.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">EN.GHG.METH.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">EN.GHG.NOXE.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">EN.GHG.FGAS.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF)</td>
+<td style="text-align: left;">FGASES (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">EN.GHG.TOTL.AG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Sector = Agriculture)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Agriculture</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">EN.GHG.TOTL.EG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Sector = Energy)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Energy</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">EN.GHG.TOTL.IN.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Sector = Industrial Processes and Product Use)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Industrial Processes and Product Use</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">EN.GHG.TOTL.OT.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Sector = Other)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Other</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">EN.GHG.TOTL.WA.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Sector = Waste)</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Waste</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">EN.GHG.CO2E.AG.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Agriculture)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Agriculture</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">EN.GHG.CO2E.EG.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Energy)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Energy</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">EN.GHG.CO2E.IN.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Industrial Processes and Product Use)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Industrial Processes and Product Use</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">EN.GHG.CO2E.OT.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Other)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Other</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">EN.GHG.CO2E.WA.KT</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Waste)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Waste</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">EN.GHG.METH.AG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = Agriculture)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Agriculture</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">EN.GHG.METH.EG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = Energy)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Energy</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">EN.GHG.METH.IN.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = Industrial Processes and Product Use)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Industrial Processes and Product Use</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">EN.GHG.METH.OT.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = Other)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Other</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">EN.GHG.METH.WA.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = Waste)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Waste</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">EN.GHG.NOXE.AG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Agriculture)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Agriculture</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">EN.GHG.NOXE.EG.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Energy)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Energy</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">EN.GHG.NOXE.IN.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Industrial Processes and Product Use)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Industrial Processes and Product Use</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">EN.GHG.NOXE.OT.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Other)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Other</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">EN.GHG.NOXE.WA.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Waste)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Waste</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">EN.GHG.FGAS.IN.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Fluorinated Gases (Sector = Industrial Processes and Product Use)</td>
+<td style="text-align: left;">FGASES (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">Industrial Processes and Product Use</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">EN.GHG.CO2E.LU.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = LULUCF)</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">Land Use, Land Use Change, and Forestry</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">28</td>
+<td style="text-align: left;">EN.GHG.METH.LU.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Sector = LULUCF)</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">Land Use, Land Use Change, and Forestry</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: left;">EN.GHG.NOXE.LU.KT.CE</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = LULUCF)</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">Land Use, Land Use Change, and Forestry</td>
+<td style="text-align: left;">absolute emissions</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">EN.GHG.TOTL.PC</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per capita</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per capita</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">EN.GHG.CO2E.PC</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per capita</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per capita</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: left;">EN.GHG.TOTL.PP.GD</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2017 PPP $ of GDP</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per GDP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">33</td>
+<td style="text-align: left;">EN.GHG.CO2E.PP.GD</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2017 PPP $ of GDP</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per GDP</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">EN.GHG.TOTL.KD.GD</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2017 US$ of GDP</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per GDP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35</td>
+<td style="text-align: left;">EN.GHG.CO2E.KD.GD</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2017 US $ of GDP</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">per GDP</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">36</td>
+<td style="text-align: left;">EN.GHG.TOTL.ZG</td>
+<td style="text-align: left;">Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) % change from 1990</td>
+<td style="text-align: left;">KYOTOGHG (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">% change</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">EN.GHG.CO2E.ZG</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) % change from 1990</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">% change</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">38</td>
+<td style="text-align: left;">EN.GHG.METH.ZG</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) % change from 1990</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">% change</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">39</td>
+<td style="text-align: left;">EN.GHG.N2OX.ZG</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) % change from 1990</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">% change</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">EN.GHG.CO2E.ZS</td>
+<td style="text-align: left;">Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) share of total GHG emissions</td>
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">share of total</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">41</td>
+<td style="text-align: left;">EN.GHG.METH.ZS</td>
+<td style="text-align: left;">Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) share of total GHG emissions</td>
+<td style="text-align: left;">CH4</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">share of total</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">42</td>
+<td style="text-align: left;">EN.GHG.N2OX.ZS</td>
+<td style="text-align: left;">Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) share of total GHG emissions</td>
+<td style="text-align: left;">N2O</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">share of total</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">43</td>
+<td style="text-align: left;">EN.GHG.FGAS.ZS</td>
+<td style="text-align: left;">Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF) share of total GHG emissions</td>
+<td style="text-align: left;">FGASES (AR4GWP100)</td>
+<td style="text-align: left; min-width: 1in;">National Total excluding LULUCF</td>
+<td style="text-align: left;">share of total</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+<section id="description-of-data-source" class="level2">
+<h2 class="anchored" data-anchor-id="description-of-data-source">Description of data source</h2>
+<p>The EDGAR (Emissions Database for Global Atmospheric Research) dataset is developed and published by the European Commission’s Joint Research Center (JRC) (see https://edgar.jrc.ec.europa.eu/). EDGAR has published emissions data since 1970. However, the first global all-encompassing database (EDGAR v8.0) was published for the first time in November 2023.</p>
+<p>The database includes emissions aggregated by country (220+ countries), category/sector (IPCC 2006 categories for emissions) and greenhouse gas/entity (all Kyoto GHGs). The dataset is regularly updated and currently has a lag of one (1) year (data available until 2022, published in October 2023). The dataset is compiled from several other public data sets (see methodology).</p>
+<p>The methodology to make the data from various sources comparable is described in this paper: Gütschow, J.; Jeffery, L.; Gieseke, R.; Gebel, R.; Stevens, D.; Krapp, M.; Rocha, M. (2016): The PRIMAP-hist national historical emissions time series, Earth Syst. Sci. Data, 8, 571-603, doi:10.5194/essd-8-571-2016.</p>
+<p>The dataset is compiled using data from the following sources:</p>
+<ul>
+<li>Global CO2 emissions from cement production v220919 (Andrew 2022)</li>
+<li>BP Statistical Review of World Energy website: Energy Institute (2023)</li>
+<li>CDIAC data: Boden et al.&nbsp;(2017): Gilfillan et al.&nbsp;(2020), paper Gilfillan and Marland (2021)</li>
+<li>EDGAR version 7.0: data, website, Reports: JRC (2022), JRC (2021)</li>
+<li>EDGAR-HYDE 1.4 data: Van Aardenne et al.&nbsp;(2001), Olivier and Berdowski (2001)</li>
+<li>FAOSTAT database data: Food and Agriculture Organization of the United Nations (2023)</li>
+<li>RCP historical data data, paper: Meinshausen et al.&nbsp;(2011)</li>
+<li>UNFCCC National Communications and National Inventory Reports for developing countries</li>
+<li>UNFCCC Biennial Update Reports, National Communications, and National Inventory Reports for developing countries</li>
+<li>UNFCCC Common Reporting Format (CRF)</li>
+<li>Official country repositories (non-UNFCCC) for Taiwan, South Korea</li>
+</ul>
+</section>
+<section id="relevance-to-development" class="level2">
+<h2 class="anchored" data-anchor-id="relevance-to-development">Relevance to development</h2>
+<p>Global warming and climate change impact development in a multitude of ways. Climate change changes the availability of water, the prevalence of extreme weather events such as floods and droughts and warms and rises the oceans. This has immediate impacts on food security, health, poverty, displacement and biodiversity. Greenhouse gas emissions contribute to global warming and therefore measures of greenhouse gas emissions, by greenhouse gas, by country, over time and by sector is pivotal to understanding climate change.</p>
+</section>
+<section id="high-quality" class="level2">
+<h2 class="anchored" data-anchor-id="high-quality">High quality</h2>
+<section id="source" class="level3">
+<h3 class="anchored" data-anchor-id="source">Source</h3>
+<p>The PRIMAP-hist data series is disseminated under the <strong>Creative Commons Attribution 4.0 International (CC BY 4.0) license</strong>. This license allows to redistribute the material in any medium or format and adapt as well, as long as appropriate credit is given and indicate if any changes were made.</p>
+<p>The most recent release was on October 15, 2023. Since the 2022 release, the time lag is only one year.</p>
+<p>Latest version, released October 15, 2023: <strong>Gütschow, J., &amp; Pflüger, M. (2023). The PRIMAP-hist national historical emissions time series (1750-2022) v2.5 (2.5) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.10006301</strong></p>
+<p>The first version of the dataset was released in 2016, with regular releases since.</p>
+<p>Earlier versions:</p>
+<p>Released Mar 15, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist national historical emissions time series v2.4.2 (1750-2021). zenodo. doi:10.5281/zenodo.7727475.</p>
+<p>Released Feb 20, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist national historical emissions time series v2.4.1 (1750-2021). zenodo. doi:10.5281/zenodo.7585420.</p>
+<p>Released October 17, 2022: Gütschow, J.; Pflüger, M. (2022): The PRIMAP-hist national historical emissions time series v2.4 (1750-2021). zenodo. doi:10.5281/zenodo.7179775.</p>
+<p>Released September 22, 2021: Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series (1750-2019). v2.3.1. zenodo. https://doi.org/10.5281/zenodo.5494497</p>
+<p>Released August 30, 2021: Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3 (1850-2019). zenodo. doi:10.5281/zenodo.5175154.</p>
+<p>Released February 9, 2021: Gütschow, J.; Günther, A.; Jeffery, L.; Gieseke, R. (2021): The PRIMAP-hist national historical emissions time series v2.2 (1850-2018). zenodo. doi:10.5281/zenodo.4479172.</p>
+<p>Gütschow, Johannes; Jeffery, Louise; Gieseke, Robert; Günther, Annika (2019): The PRIMAP-hist national historical emissions time series (1850-2017). v2.1. GFZ Data Services. https://doi.org/10.5880/PIK.2019.018.</p>
+<p>Gütschow, J., Jeffery, M. L., Gieseke, R., Gebel, R., Stevens, D., Krapp, M., and Rocha, M. (2016): The PRIMAP-hist national historical emissions time series, Earth Syst. Sci. Data, 8, 571–603, https://doi.org/10.5194/essd-8-571-2016.</p>
+<p>Using one source for all GHG indicators guarantees comparability across indicators.</p>
+</section>
+<section id="unique-visitors" class="level3">
+<h3 class="anchored" data-anchor-id="unique-visitors">Unique visitors</h3>
+<p>No data on number of unique visitors for new series. The latest version of the PRIMAP-hist data was dowmloaded 14,000 times in the first month after publication. The data is also available on the <a href="https://www.climatewatchdata.org/ghg-emissions">Climate Watch (CAIT)</a> website.</p>
+<p>Improved data quality and coverage can increase the number of unique visitors of the GHG indicators in WDI.</p>
+</section>
+</section>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+<p>Copied from https://zenodo.org/record/7585420</p>
+<p>The PRIMAP-hist dataset combines several published datasets to create a comprehensive set of greenhouse gas emission pathways for every country and Kyoto gas, covering the years 1750 to 2021, and almost all UNFCCC (United Nations Framework Convention on Climate Change) member states as well as most non-UNFCCC territories. The data resolves the main IPCC (Intergovernmental Panel on Climate Change) 2006 categories. For CO2, CH4, and N2O subsector data for Energy, Industrial Processes and Product Use (IPPU), and Agriculture are available. The “country reported data priority” (CR) scenario of the PRIMAP-hist datset prioritizes data that individual countries report to the UNFCCC. For developed countries, AnnexI in terms of the UNFCCC, this is the data submitted anually in the “common reporting format” (CRF). For developing countries, non-AnnexI in terms of the UNFCCC, this is the data available through the UNFCCC DI interface (di.unfccc.int) with additional country submissions read from pdf and where available xls(x) or csv files. For a list of these submissions please see below. For South Korea the 2021 official GHG inventory has not yet been submitted to the UNFCCC but is included in PRIMAP-hist. PRIMAP-hist also includes official data for Taiwan which is not recognized as a party to the UNFCCC.</p>
+<p>Gaps in the country reported data are filled using third party data such as CDIAC, BP (fossil CO2), Andrew cement emissions data (cement), FAOSTAT (agriculture), and EDGAR v7.0 (all sectors). Lower priority data are harmonized to higher priority data in the gap-filling process.</p>
+<p>For the third party priority time series gaps in the third party data are filled from country reported data sources.</p>
+<p>Data for earlier years which are not available in the above mentioned sources are sourced from EDGAR-HYDE, CEDS, and RCP (N2O only) historical emissions.</p>
+<p>The v2.4 release of PRIMAP-hist reduced the time-lag from 2 to 1 years. Thus we include data for 2021 while the 2.3.1 version included data for 2019 only. For energy CO<span class="math inline">\(_2\)</span> growth rates from the BP statistical review of world energy are used to extend the country reported (CR) or CDIAC (TP) data to 2021. For CO<span class="math inline">\(_2\)</span> from cement production Andrew cement data are used. For other gases and sectors, EDGAR 7.0 is used in PRIMAP-hist v2.4.1 (v2,4 had to rely on numerical methods ).</p>
+<p>Version 2.4.1 of the PRIMAP-hist dataset does not include emissions from Land Use, Land-Use Change, and Forestry (LULUCF) in the main file. LULUCF data are included in the file with increased number of significant digits and have to be used with care as they are constructed from different sources using different methodologies and are not harmonized.</p>
+<p>Notes</p>
+<ul>
+<li>Emissions from international aviation and shipping are not included in the dataset.</li>
+<li>Emissions from Land Use, Land-Use Change, and Forestry (LULUCF) are not included in the main version of this dataset. They are included in the version without rounding as users need to take extra care when using LULUCF data because changes some of the year-to-year changes in the data come from using different sources or methodology changes within a source rather than changes in actual emissions.</li>
+</ul>
+</section>
+<section id="adequate-coverage" class="level2">
+<h2 class="anchored" data-anchor-id="adequate-coverage">Adequate coverage</h2>
+<p>For the PRIMAP-hist data coverage is the same for all indicators, as data has been imputed where necessary.</p>
+<p>For the current indicators, coverage depends on the source of the indicator.</p>
+<section id="number-of-economies" class="level3">
+<h3 class="anchored" data-anchor-id="number-of-economies">Number of economies</h3>
+<p><strong>PRIMAP-hist</strong></p>
+<p>The WDI includes 217 countries of which 198 are included in the PRIMAP-hist dataset. The country coverage for the PRIMAP-hist data is 91 percent.</p>
+<p>The following WDI countries are not included in the PRIMAP-hist dataset. Note that most of these countries are overseas territories, which are likely included in the total of the country or economy they belong to (exceptions are West Bank and Gaza and Kosovo).</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">long_name</th>
+<th style="text-align: left;">ISO3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">American Samoa</td>
+<td style="text-align: left;">ASM</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bermuda</td>
+<td style="text-align: left;">BMU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cayman Islands</td>
+<td style="text-align: left;">CYM</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Channel Islands</td>
+<td style="text-align: left;">CHI</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Curacao</td>
+<td style="text-align: left;">CUW</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Faroe Islands</td>
+<td style="text-align: left;">FRO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">French Polynesia</td>
+<td style="text-align: left;">PYF</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gibraltar</td>
+<td style="text-align: left;">GIB</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Greenland</td>
+<td style="text-align: left;">GRL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Guam</td>
+<td style="text-align: left;">GUM</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Isle of Man</td>
+<td style="text-align: left;">IMN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kosovo</td>
+<td style="text-align: left;">XKX</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">New Caledonia</td>
+<td style="text-align: left;">NCL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Mariana Islands</td>
+<td style="text-align: left;">MNP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Puerto Rico</td>
+<td style="text-align: left;">PRI</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sint Maarten (Dutch part)</td>
+<td style="text-align: left;">SXM</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">St.&nbsp;Martin (French part)</td>
+<td style="text-align: left;">MAF</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Virgin Islands (U.S.)</td>
+<td style="text-align: left;">VIR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">West Bank and Gaza</td>
+<td style="text-align: left;">PSE</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="share-of-low-and-middle-income-countries" class="level3">
+<h3 class="anchored" data-anchor-id="share-of-low-and-middle-income-countries">Share of low and middle income countries</h3>
+<p><strong>PRIMAP-hist</strong></p>
+<p>The PIK data include 132 LMIC countries, which is 99 percent of the total LMIC countries in WDI.</p>
+</section>
+<section id="absolute-latest-year" class="level3">
+<h3 class="anchored" data-anchor-id="absolute-latest-year">Absolute latest year</h3>
+<p><strong>PRIMAP-hist</strong></p>
+<p>The absolute latest year in the PIK data is 2022.</p>
+</section>
+<section id="median-latest-year" class="level3">
+<h3 class="anchored" data-anchor-id="median-latest-year">Median latest year</h3>
+<p><strong>PRIMAP-hist</strong></p>
+<p>The median latest year in the PIK data is 2022. This is the same for the data without extrapolation.</p>
+</section>
+<section id="span-of-years" class="level3">
+<h3 class="anchored" data-anchor-id="span-of-years">Span of years</h3>
+<p><strong>PRIMAP-hist</strong></p>
+<p>The span of years in the PIK data is 63. Data is available from 1750, but this is not relevant for the WDI.</p>
+</section>
+<section id="non-missing-data" class="level3">
+<h3 class="anchored" data-anchor-id="non-missing-data">Non-missing data</h3>
+<p>Time and country coverage of existing indicators showing that latest year of many indicators is 2014 or 2018 and country coverage is low for some indicators.</p>
+</section>
+</section>
+<section id="additional-issuesquestions-for-consideration" class="level2">
+<h2 class="anchored" data-anchor-id="additional-issuesquestions-for-consideration">Additional issues/questions for consideration</h2>
+<section id="issues-with-current-data-sourcesindicators" class="level3">
+<h3 class="anchored" data-anchor-id="issues-with-current-data-sourcesindicators">Issues with current data sources/indicators</h3>
+<!-- GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. -->
+<p>The CAIT data are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.</p>
+<p>Licensing issues and data availability: indicators from IEA are distributed under a license that restricts redistribution and only available until 2014.</p>
+<p>The official SDG indicators on GHG emissions are</p>
+<ul>
+<li>INDICATOR 9.4.1 CO2 emission per unit of value added and;</li>
+<li>INDICATOR 13.2.2 Total greenhouse gas emissions per year</li>
+</ul>
+<p>See https://unstats.un.org/sdgs/dataportal/database. The respective sources are UNIDO and UNFCCC.</p>
+<!-- Indicator 9.4.1 does not reflect -->
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

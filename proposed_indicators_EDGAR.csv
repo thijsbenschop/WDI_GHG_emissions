@@ -1,0 +1,36 @@
+﻿code,name
+EN.GHG.TOTL.KT.CE,Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF)
+EN.GHG.CO2E.KT,Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF)
+EN.GHG.METH.KT.CE,Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF)
+EN.GHG.NOXE.KT.CE,Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF)
+EN.GHG.FGAS.KT.CE,Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF)
+EN.GHG.TOTL.AG.KT.CE,Greenhouse gas emissions: All Kyoto Gases (Sector = Agriculture)
+EN.GHG.TOTL.EG.KT.CE,Greenhouse gas emissions: All Kyoto Gases (Sector = Energy)
+EN.GHG.TOTL.IN.KT.CE,Greenhouse gas emissions: All Kyoto Gases (Sector = Industrial Processes and Product Use)
+EN.GHG.TOTL.WA.KT.CE,Greenhouse gas emissions: All Kyoto Gases (Sector = Waste)
+EN.GHG.CO2E.AG.KT,Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Agriculture)
+EN.GHG.CO2E.EG.KT,Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Energy)
+EN.GHG.CO2E.IN.KT,Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Industrial Processes and Product Use)
+EN.GHG.CO2E.WA.KT,Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Waste)
+EN.GHG.METH.AG.KT.CE,Greenhouse gas emissions: Methane (CH4) (Sector = Agriculture)
+EN.GHG.METH.EG.KT.CE,Greenhouse gas emissions: Methane (CH4) (Sector = Energy)
+EN.GHG.METH.IN.KT.CE,Greenhouse gas emissions: Methane (CH4) (Sector = Industrial Processes and Product Use)
+EN.GHG.METH.WA.KT.CE,Greenhouse gas emissions: Methane (CH4) (Sector = Waste)
+EN.GHG.NOXE.AG.KT.CE,Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Agriculture)
+EN.GHG.NOXE.EG.KT.CE,Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Energy)
+EN.GHG.NOXE.IN.KT.CE,Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Industrial Processes and Product Use)
+EN.GHG.NOXE.WA.KT.CE,Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Waste)
+EN.GHG.FGAS.IN.KT.CE,Greenhouse gas emissions: Fluorinated Gases (Sector = Industrial Processes and Product Use)
+EN.GHG.CO2E.LU.KT.CE,Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = LULUCF)
+EN.GHG.TOTL.PC,Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per capita
+EN.GHG.CO2E.PC,Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per capita
+EN.GHG.TOTL.PP.GD,Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2021 PPP $ of GDP
+EN.GHG.CO2E.PP.GD,Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2021 PPP $ of GDP
+EN.GHG.TOTL.ZG,Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) % change from 1990
+EN.GHG.CO2E.ZG,Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) % change from 1990
+EN.GHG.METH.ZG,Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) % change from 1990
+EN.GHG.N2OX.ZG,Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) % change from 1990
+EN.GHG.CO2E.ZS,Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) share of total GHG emissions
+EN.GHG.METH.ZS,Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF) share of total GHG emissions
+EN.GHG.N2OX.ZS,Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF) share of total GHG emissions
+EN.GHG.FGAS.ZS,Greenhouse gas emissions: Fluorinated Gases (Total excluding LULUCF) share of total GHG emissions

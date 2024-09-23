@@ -1,0 +1,424 @@
+---
+title: "WDI Greenhouse Gas Emissions indicators"
+date: 2024-06-03
+date-format: short
+author: "Thijs Benschop"
+format: 
+  html:
+    toc: true
+    page-layout: full
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Load packages
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(readxl)
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(ggrepel)
+library(plotly)
+library(knitr)
+library(htmltools)
+library(data.tree)
+library(DiagrammeR)
+library(stringr)
+library(kableExtra)
+
+setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
+
+rm(list = ls())
+
+####### Read data ####### 
+# Data downloaded from https://edgar.jrc.ec.europa.eu/dataset_ghg80
+# Version 8.0 of EDGAR data // Published November 2023
+EDGAR <- as.data.table(read.csv("./Data_private/EDGAR/EDGAR_AR5_GHG_1970_2022b/EDGAR_AR5_GHG_1970_2022.xlsx"))
+
+PIK <- as.data.table(read.csv("./data_private/PIK/Guetschow_et_al_2023b-PRIMAP-hist_v2.5_final_15-Oct-2023.csv"))
+PIK_no_extrapol <- as.data.table(read.csv("./data_private/PIK/Guetschow_et_al_2023b-PRIMAP-hist_v2.5_final_no_extrap_15-Oct-2023.csv"))
+
+# # Data downloaded from https://zenodo.org/record/7727475
+# # Version 2.4.2 of PRIMAP-HIST dataset // March 2023
+# PIK <- as.data.table(read.csv("./data_private/PIK/Guetschow-et-al-2023a-PRIMAP-hist_v2.4.2_final_09-Mar-2023.csv"))
+# PIK_no_extrapol <- as.data.table(read.csv("./data_private/PIK/Guetschow-et-al-2023a-PRIMAP-hist_v2.4.2_final_no_extrap_09-Mar-2023.csv"))
+
+#PIK <- as.data.table(read.csv("./Data_private/PIK/PRIMAP-hist_v1.1_06-Mar-2017.csv"))
+setnames(PIK, "scenario..PRIMAP.hist.", "scenario")
+
+# Country metadata from WDI bulkfile
+# Downloaded from https://datatopics.worldbank.org/world-development-indicators/ on November 14, 2023
+destfile <- "./Data_private/WDI_CSV (5).zip"
+countrymeta <- read.table(unz(destfile, "WDICountry.csv"), header=T, quote="\"", sep=",")
+
+# Read spreadsheets
+cur_indicators <- read_xlsx("current_WDI_indicators.xlsx")
+cur_indicators <- subset(cur_indicators, select = -c(Source_old, `Time coverage_old`))
+new_indicators <- read_xlsx("./Data/new_indicators.xlsx")
+```
+
+This note describes the current greenhouse gas (GHG) emissions indicators in the WDI and proposes a new set of indicators using a different data source (EDGAR). The indicators are evaluated using the inclusion criteria comparing the current and proposed indicators. An earlier proposal was made for replacing GHG indicators in WDI using PIK data. However, as the EDGAR data is used for the Corporate Scorecard (CSC) indicators, this proposal suggests using the same data source as the CSC indicators.
+
+## Current GHG emissions indicators in WDI
+
+Currently, 37 indicators on GHG emissions are included in the WDI. The proposal to revise the set of indicators and the data source is due to several shortcomings of the current set of indicators:
+
+-   many indicators are outdated and no longer updated by source (or not available - IEA data)
+-   many indicators are not reported annually and/or do not start in 1960
+-   indicators from different sources cannot be compared due to different definitions/units and methodologies
+-   country coverage for some indicators is low
+
+The following 37 GHG related indicators are currently in the WDI database:
+
+```{r display_cur_indicators, fig.width=12, echo=FALSE, results = 'asis'}
+cur_indicators <- cur_indicators[order(cur_indicators$Source),]
+
+kable(cur_indicators) %>%  
+    kable_styling(full_width = T) %>%
+    column_spec(5, width_min = '2in')
+
+cur_indicators$pathString <- paste("WDI GHG Indicators", 
+                                   cur_indicators$GHG, 
+                                   cur_indicators$Sector, 
+                                   cur_indicators$`Series code`,
+                                   cur_indicators$Description,
+                                   sep = "/")
+
+cur_indicators_tree <- data.tree::as.Node(cur_indicators)
+
+#print(cur_indicators_tree) #, "Description", "Source", "Time coverage")
+
+SetGraphStyle(cur_indicators_tree, rankdir = "LR") # left-right
+
+fontsizenew = 24
+
+SetEdgeStyle(cur_indicators_tree, arrowhead = "vee", color = "grey35", penwidth = 2, fontsize = fontsizenew)
+
+SetNodeStyle(cur_indicators_tree, style = "filled,rounded", shape = "box", fillcolor = "White", 
+             fontname = "helvetica", tooltip = GetDefaultTooltip, fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$All, fillcolor = "LightBlue", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$CO2, fillcolor = "Orange", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$CH4, fillcolor = "Yellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$N2O, fillcolor = "Pink", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+SetNodeStyle(cur_indicators_tree$`Fluorinated gases`, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+
+#SetNodeStyle(cur_indicators_tree$Other, fillcolor = "GreenYellow", penwidth = "2px", fontcolor = "black", fontsize = fontsizenew)
+```
+
+<!-- Breakdown of current indicators by GHG and sector -->
+
+```{r display_cur_indicators_by_GHG_sector, fig.width=20, echo=FALSE, results = 'asis'}
+#| out-width: 100%
+#| fig-format: svg
+#plot(cur_indicators_tree)
+```
+
+## List of proposed indicators
+
+Based on the current selection of indicators included in the WDI as well as the available time series in the EDGAR dataset and the relevance of indicators to the WDI audience, it is proposed to include the following set of indicators in the WDI. All indicators have data from 1970 until 2022, except for the LULUCF indicators (2000-2022). For some countries and gases the values for 2022 are extrapolated.
+
+```{r display_new_indicators, fig.width=12, echo=FALSE, results = 'asis'}
+
+kable(new_indicators %>% select(Number,	`Indicator Code`,	`Indicator Name`,	Gases,	Sector,	Type)) %>%
+    kable_styling(full_width = T) %>%
+    column_spec(5, width_min = '1in')
+```
+
+## Description of data source
+
+The EDGAR (Emissions Database for Global Atmospheric Research) dataset is developed and published by the European Commission's Joint Research Center (JRC) (see https://edgar.jrc.ec.europa.eu/). EDGAR has published emissions data since 1970. However, the first global all-encompassing database (EDGAR v8.0) was published for the first time in November 2023.
+
+The database includes emissions aggregated by country (220+ countries), category/sector (IPCC 2006 categories for emissions) and greenhouse gas/entity (all Kyoto GHGs). The dataset is regularly updated and currently has a lag of one (1) year (data available until 2022, published in October 2023). The dataset is compiled from several other public data sets (see methodology).
+
+The methodology to make the data from various sources comparable is described in this paper: Gütschow, J.; Jeffery, L.; Gieseke, R.; Gebel, R.; Stevens, D.; Krapp, M.; Rocha, M. (2016): The PRIMAP-hist national historical emissions time series, Earth Syst. Sci. Data, 8, 571-603, doi:10.5194/essd-8-571-2016.
+
+The dataset is compiled using data from the following sources:
+
+-   Global CO2 emissions from cement production v220919 (Andrew 2022)
+-   BP Statistical Review of World Energy website: Energy Institute (2023)
+-   CDIAC data: Boden et al. (2017): Gilfillan et al. (2020), paper Gilfillan and Marland (2021)
+-   EDGAR version 7.0: data, website, Reports: JRC (2022), JRC (2021)
+-   EDGAR-HYDE 1.4 data: Van Aardenne et al. (2001), Olivier and Berdowski (2001)
+-   FAOSTAT database data: Food and Agriculture Organization of the United Nations (2023)
+-   RCP historical data data, paper: Meinshausen et al. (2011)
+-   UNFCCC National Communications and National Inventory Reports for developing countries
+-   UNFCCC Biennial Update Reports, National Communications, and National Inventory Reports for developing countries
+-   UNFCCC Common Reporting Format (CRF)
+-   Official country repositories (non-UNFCCC) for Taiwan, South Korea
+
+## Relevance to development
+
+Global warming and climate change impact development in a multitude of ways. Climate change changes the availability of water, the prevalence of extreme weather events such as floods and droughts and warms and rises the oceans. This has immediate impacts on food security, health, poverty, displacement and biodiversity. Greenhouse gas emissions contribute to global warming and therefore measures of greenhouse gas emissions, by greenhouse gas, by country, over time and by sector is pivotal to understanding climate change.
+
+## High quality
+
+### Source
+
+The PRIMAP-hist data series is disseminated under the **Creative Commons Attribution 4.0 International (CC BY 4.0) license**. This license allows to redistribute the material in any medium or format and adapt as well, as long as appropriate credit is given and indicate if any changes were made.
+
+The most recent release was on October 15, 2023. Since the 2022 release, the time lag is only one year.
+
+Latest version, released October 15, 2023: **Gütschow, J., & Pflüger, M. (2023). The PRIMAP-hist national historical emissions time series (1750-2022) v2.5 (2.5) \[Data set\]. Zenodo. https://doi.org/10.5281/zenodo.10006301**
+
+The first version of the dataset was released in 2016, with regular releases since.
+
+Earlier versions:
+
+Released Mar 15, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist national historical emissions time series v2.4.2 (1750-2021). zenodo. doi:10.5281/zenodo.7727475.
+
+Released Feb 20, 2023: Gütschow, J.; Pflüger, M. (2023): The PRIMAP-hist national historical emissions time series v2.4.1 (1750-2021). zenodo. doi:10.5281/zenodo.7585420.
+
+Released October 17, 2022: Gütschow, J.; Pflüger, M. (2022): The PRIMAP-hist national historical emissions time series v2.4 (1750-2021). zenodo. doi:10.5281/zenodo.7179775.
+
+Released September 22, 2021: Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series (1750-2019). v2.3.1. zenodo. https://doi.org/10.5281/zenodo.5494497
+
+Released August 30, 2021: Gütschow, J.; Günther, A.; Pflüger, M. (2021): The PRIMAP-hist national historical emissions time series v2.3 (1850-2019). zenodo. doi:10.5281/zenodo.5175154.
+
+Released February 9, 2021: Gütschow, J.; Günther, A.; Jeffery, L.; Gieseke, R. (2021): The PRIMAP-hist national historical emissions time series v2.2 (1850-2018). zenodo. doi:10.5281/zenodo.4479172.
+
+Gütschow, Johannes; Jeffery, Louise; Gieseke, Robert; Günther, Annika (2019): The PRIMAP-hist national historical emissions time series (1850-2017). v2.1. GFZ Data Services. https://doi.org/10.5880/PIK.2019.018.
+
+Gütschow, J., Jeffery, M. L., Gieseke, R., Gebel, R., Stevens, D., Krapp, M., and Rocha, M. (2016): The PRIMAP-hist national historical emissions time series, Earth Syst. Sci. Data, 8, 571--603, https://doi.org/10.5194/essd-8-571-2016.
+
+Using one source for all GHG indicators guarantees comparability across indicators.
+
+### Unique visitors
+
+No data on number of unique visitors for new series. The latest version of the PRIMAP-hist data was dowmloaded 14,000 times in the first month after publication. The data is also available on the [Climate Watch (CAIT)](https://www.climatewatchdata.org/ghg-emissions) website.
+
+Improved data quality and coverage can increase the number of unique visitors of the GHG indicators in WDI.
+
+## Methodology
+
+Copied from https://zenodo.org/record/7585420
+
+The PRIMAP-hist dataset combines several published datasets to create a comprehensive set of greenhouse gas emission pathways for every country and Kyoto gas, covering the years 1750 to 2021, and almost all UNFCCC (United Nations Framework Convention on Climate Change) member states as well as most non-UNFCCC territories. The data resolves the main IPCC (Intergovernmental Panel on Climate Change) 2006 categories. For CO2, CH4, and N2O subsector data for Energy, Industrial Processes and Product Use (IPPU), and Agriculture are available. The "country reported data priority" (CR) scenario of the PRIMAP-hist datset prioritizes data that individual countries report to the UNFCCC. For developed countries, AnnexI in terms of the UNFCCC, this is the data submitted anually in the "common reporting format" (CRF). For developing countries, non-AnnexI in terms of the UNFCCC, this is the data available through the UNFCCC DI interface (di.unfccc.int) with additional country submissions read from pdf and where available xls(x) or csv files. For a list of these submissions please see below. For South Korea the 2021 official GHG inventory has not yet been submitted to the UNFCCC but is included in PRIMAP-hist. PRIMAP-hist also includes official data for Taiwan which is not recognized as a party to the UNFCCC.
+
+Gaps in the country reported data are filled using third party data such as CDIAC, BP (fossil CO2), Andrew cement emissions data (cement), FAOSTAT (agriculture), and EDGAR v7.0 (all sectors). Lower priority data are harmonized to higher priority data in the gap-filling process.
+
+For the third party priority time series gaps in the third party data are filled from country reported data sources.
+
+Data for earlier years which are not available in the above mentioned sources are sourced from EDGAR-HYDE, CEDS, and RCP (N2O only) historical emissions.
+
+The v2.4 release of PRIMAP-hist reduced the time-lag from 2 to 1 years. Thus we include data for 2021 while the 2.3.1 version included data for 2019 only. For energy CO$_2$ growth rates from the BP statistical review of world energy are used to extend the country reported (CR) or CDIAC (TP) data to 2021. For CO$_2$ from cement production Andrew cement data are used. For other gases and sectors, EDGAR 7.0 is used in PRIMAP-hist v2.4.1 (v2,4 had to rely on numerical methods ).
+
+Version 2.4.1 of the PRIMAP-hist dataset does not include emissions from Land Use, Land-Use Change, and Forestry (LULUCF) in the main file. LULUCF data are included in the file with increased number of significant digits and have to be used with care as they are constructed from different sources using different methodologies and are not harmonized.
+
+Notes
+
+-   Emissions from international aviation and shipping are not included in the dataset.
+-   Emissions from Land Use, Land-Use Change, and Forestry (LULUCF) are not included in the main version of this dataset. They are included in the version without rounding as users need to take extra care when using LULUCF data because changes some of the year-to-year changes in the data come from using different sources or methodology changes within a source rather than changes in actual emissions.
+
+## Adequate coverage
+
+For the PRIMAP-hist data coverage is the same for all indicators, as data has been imputed where necessary.
+
+For the current indicators, coverage depends on the source of the indicator.
+
+### Number of economies
+
+```{r country_coverage, include=FALSE}
+# Check which WDI countries available
+# Load country WDI list (217 countries)
+WDI_countries <- as.data.table(read.csv("Data/wdi_country_list.csv"))
+setnames(WDI_countries, c("long_name", "ISO3"))
+
+PIK_countries <- unique(PIK$area..ISO3.) # unique(PIK$area..ISO3.)
+length(PIK_countries) # 215 countries
+table(WDI_countries$ISO3 %in% PIK_countries) # 198 WDI countries available in PIK
+WDI_countries[!(ISO3 %in% PIK_countries)] # list of missing countries
+table(PIK_countries %in% WDI_countries$ISO3)
+PIK_countries[!(PIK_countries %in% WDI_countries$ISO3)] # list of missing countries
+
+# Drop countries/regions not in WDI
+#PIK <- PIK[ISO3 %in% WDI_countries$ISO3]
+PIK <- PIK[area..ISO3. %in% WDI_countries$ISO3]
+
+# Rename variables
+#colnames(PIK)
+#setnames(PIK, c("area..ISO3.", "category..IPCC2006_PRIMAP."),
+#         c("ISO3", "category"))
+```
+
+**PRIMAP-hist**
+
+The WDI includes `r nrow(WDI_countries)` countries of which `r sum(WDI_countries$ISO3 %in% PIK_countries)` are included in the PRIMAP-hist dataset. The country coverage for the PRIMAP-hist data is `r round(100 * length(unique(PIK$area..ISO3.)) / nrow(WDI_countries))` percent.
+
+The following WDI countries are not included in the PRIMAP-hist dataset. Note that most of these countries are overseas territories, which are likely included in the total of the country or economy they belong to (exceptions are West Bank and Gaza and Kosovo).
+
+```{r echo = FALSE, results='asis'}
+kable(WDI_countries[!(ISO3 %in% PIK_countries)])
+```
+
+### Share of low and middle income countries
+
+```{r lmic_coverage, echo = FALSE, include = FALSE}
+# Make LMIC country list
+# Merge relevant metadata
+countrymeta <- countrymeta %>%
+  select("Country.Code", "Region", "Income.Group", "Lending.category")
+
+lmics <- unique(countrymeta[which(
+  countrymeta$Income.Group == 'Low income' |
+    countrymeta$Income.Group == 'Lower middle income' |
+    countrymeta$Income.Group == 'Upper middle income'),]$Country.Code)
+
+sum(lmics %in% PIK_countries)
+```
+
+**PRIMAP-hist**
+
+The PIK data include `r sum(lmics %in% PIK_countries)` LMIC countries, which is `r round(100 * sum(lmics %in% PIK_countries) / length(lmics))` percent of the total LMIC countries in WDI.
+
+### Absolute latest year
+
+```{r abs_latest_y, echo = FALSE, include = FALSE}
+# Coverage statistics for file with extrapolation
+PIK_abs_latest <- PIK %>% filter(scenario == "HISTTP" & area..ISO3. %in% WDI_countries$ISO3 
+               & category..IPCC2006_PRIMAP. == "M.0.EL" & entity == "KYOTOGHG (AR4GWP100)") %>%
+  select("area..ISO3.", "entity", 'X1960':'X1999', starts_with('X2')) %>%
+   melt(id.vars = c("area..ISO3.", "entity")) %>% rename("Year" = "variable") %>%
+  #  drop_na("value")
+  mutate(Year = str_replace(Year, "X", "")) %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
+  group_by(area..ISO3.)
+
+PIK_coverage_stats <- PIK_abs_latest %>% group_by(entity, area..ISO3.) %>%
+  summarise(percountry_obs = n(),
+            percountry_maxyear = max(Year),
+            percountry_minyear = min(Year),
+            percountry_meanyear = mean(Year)) %>%
+  ungroup() %>%
+  group_by(entity) %>%
+  summarise(n_country  = n_distinct(area..ISO3.),           # Number of countries covered
+#            n_years    = n_distinct(Year),                 # Number of years covered
+            countryobs_avg    = mean(percountry_obs),       # Average number of obs per country
+            countryobs_max    = max(percountry_obs),        # Max number of obs per country
+            yearlatest_mean   = mean(percountry_maxyear),   # Mean latest year per country
+            yearlatest_median = median(percountry_maxyear), # Median latest year per country
+            yearlatest        = max(percountry_maxyear),    # Latest year
+            yearfirst_mean    = mean(percountry_minyear),   # Mean first year per country
+            yearfirst_median  = median(percountry_minyear), # Median first year per country
+            yearfirst         = min(percountry_minyear),    # First year
+            yearmean_mean     = mean(percountry_meanyear),
+            yearmean_median   = median(percountry_meanyear),
+            n_lmic            = sum(unique(area..ISO3.) %in% lmics))
+
+# Coverage statistics for file without extrapolation
+PIK_abs_latest_no_extrapol <- PIK_no_extrapol %>% filter(scenario..PRIMAP.hist. == "HISTTP" & area..ISO3. %in% WDI_countries$ISO3 
+               & category..IPCC2006_PRIMAP. == "M.0.EL" & entity == "KYOTOGHG (AR4GWP100)") %>%
+  select("area..ISO3.", "entity", 'X1960':'X1999', starts_with('X2')) %>%
+   melt(id.vars = c("area..ISO3.", "entity")) %>% rename("Year" = "variable") %>%
+#    drop_na("value")
+  mutate(Year = str_replace(Year, "X", "")) %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
+  group_by(area..ISO3.)
+
+PIK_coverage_stats_no_extrapol <- PIK_abs_latest_no_extrapol %>% group_by(entity, area..ISO3.) %>%
+  summarise(percountry_obs = n(),
+            percountry_maxyear = max(Year),
+            percountry_minyear = min(Year),
+            percountry_meanyear = mean(Year)) %>%
+  ungroup() %>%
+  group_by(entity) %>%
+  summarise(n_country  = n_distinct(area..ISO3.),           # Number of countries covered
+#            n_years    = n_distinct(Year),                 # Number of years covered
+            countryobs_avg    = mean(percountry_obs),       # Average number of obs per country
+            countryobs_max    = max(percountry_obs),        # Max number of obs per country
+            yearlatest_mean   = mean(percountry_maxyear),   # Mean latest year per country
+            yearlatest_median = median(percountry_maxyear), # Median latest year per country
+            yearlatest        = max(percountry_maxyear),    # Latest year
+            yearfirst_mean    = mean(percountry_minyear),   # Mean first year per country
+            yearfirst_median  = median(percountry_minyear), # Median first year per country
+            yearfirst         = min(percountry_minyear),    # First year
+            yearmean_mean     = mean(percountry_meanyear),
+            yearmean_median   = median(percountry_meanyear),
+            n_lmic            = sum(unique(area..ISO3.) %in% lmics))
+ 
+ 
+ 
+```
+
+**PRIMAP-hist**
+
+The absolute latest year in the PIK data is `r PIK_coverage_stats$yearlatest`.
+
+### Median latest year
+
+**PRIMAP-hist**
+
+The median latest year in the PIK data is `r PIK_coverage_stats$yearlatest_median`. This is the same for the data without extrapolation.
+
+### Span of years
+
+**PRIMAP-hist**
+
+The span of years in the PIK data is `r PIK_coverage_stats$yearlatest - PIK_coverage_stats$yearfirst + 1`. Data is available from 1750, but this is not relevant for the WDI.
+
+### Non-missing data
+
+```{r non_missing, echo = FALSE, include = FALSE}
+PIK %>% filter(scenario == "HISTTP" & area..ISO3. %in% WDI_countries$ISO3 
+               & category..IPCC2006_PRIMAP. == "M.0.EL" & entity == "KYOTOGHG (AR4GWP100)") %>%
+  select("area..ISO3.", "entity", 'X1960':'X1999', starts_with('X2')) %>%
+   melt(id.vars = c("area..ISO3.", "entity")) %>% rename("Year" = "variable") %>%
+  #  drop_na("value")
+  mutate(Year = str_replace(Year, "X", "")) %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
+  group_by(area..ISO3.)
+```
+
+Time and country coverage of existing indicators showing that latest year of many indicators is 2014 or 2018 and country coverage is low for some indicators.
+
+```{r display_coverage, echo=FALSE, results = 'asis'}
+# from environment gap analysis
+
+# data_count <- as.data.table(read.csv("data_count_env.csv"))
+# 
+# p <-  data_count %>% 
+#       filter(Year >= 2000, Year <= 2020, Indicator.Code %in% cur_indicators$`Series code`) %>%
+#       ggplot(aes(x = Year,
+#                  y = Indicator.Code,
+#                  text = Indicator.Name, 
+#                  fill = count)) +
+#       geom_tile() +
+#   scale_fill_viridis_c(option = "A", alpha = .8,
+#                        limits = c(0, 220),
+#                        breaks = c(0, 50, 100, 150, 200)) +
+#   labs(x = "", y = "") +
+#   scale_x_continuous(breaks = c(2000:2020),
+#                      # leaves some padding on either side of the heatmap - necessary for PDF versions
+#                      limits=c(1999,2021),
+#                      expand = c(0,0)) +
+#   theme(axis.text.x = element_text(size = rel(0.8), angle = 330, hjust = 0, colour = "grey50"),
+#         axis.text.y = element_text(size = rel(0.5), colour = "grey50")) 
+#    
+#   ggplotly(p) # for html_output
+  #p # for github_document  
+
+#render_table_coverage
+```
+
+## Additional issues/questions for consideration
+
+### Issues with current data sources/indicators
+
+<!-- GHG indicators combine two different sources, that create a jump in the series due to different methodologies used in the two series. -->
+
+The CAIT data are more volatile and the volatility does not always have explaining factors. Volatility partially occurs because of the way the series is compiled by CAIT. CAIT (and other sources) compile their series using different primary sources. The sources can be broadly divided into country-reported data and third-party data. Differences between these two sources can be large and CAIT fills missing data from one source with missing data from another sources, which explains in part the observed volatility in the data. CAIT does not use official inventories reported to UNFCCC, PIK does for countries where available.
+
+Licensing issues and data availability: indicators from IEA are distributed under a license that restricts redistribution and only available until 2014.
+
+The official SDG indicators on GHG emissions are
+
+-   INDICATOR 9.4.1 CO2 emission per unit of value added and;
+-   INDICATOR 13.2.2 Total greenhouse gas emissions per year
+
+See https://unstats.un.org/sdgs/dataportal/database. The respective sources are UNIDO and UNFCCC.
+
+<!-- Indicator 9.4.1 does not reflect -->

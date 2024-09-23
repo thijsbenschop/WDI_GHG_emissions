@@ -1,0 +1,25 @@
+"","code","name","hybrid_score_wgtd2","n_country","p_lmic","yearlatest","span_years","nonmiss_tot"
+"21","EN.GHG.TOTL.KT.CE","Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF)",4,203,96.27,2022,53,100
+"3","EN.GHG.CO2E.KT","Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF)",4,203,96.27,2022,53,100
+"11","EN.GHG.METH.KT.CE","Greenhouse gas emissions: Methane (CH4) (Total excluding LULUCF)",4,203,96.27,2022,53,100
+"16","EN.GHG.NOXE.KT.CE","Greenhouse gas emissions: Nitrous Oxide (N2O) (Total excluding LULUCF)",4,201,95.52,2022,53,99.01
+"18","EN.GHG.TOTL.AG.KT.CE","Greenhouse gas emissions: All Kyoto Gases (Sector = Agriculture)",4,193,94.78,2022,53,95.07
+"19","EN.GHG.TOTL.EG.KT.CE","Greenhouse gas emissions: All Kyoto Gases (Sector = Energy)",4,197,94.03,2022,53,97.04
+"20","EN.GHG.TOTL.IN.KT.CE","Greenhouse gas emissions: All Kyoto Gases (Sector = Industrial Processes and Product Use)",4,203,96.27,2022,53,100
+"24","EN.GHG.TOTL.WA.KT.CE","Greenhouse gas emissions: All Kyoto Gases (Sector = Waste)",4,203,96.27,2022,53,100
+"1","EN.GHG.CO2E.EG.KT","Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Energy)",4,194,94.03,2022,53,95.57
+"2","EN.GHG.CO2E.IN.KT","Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Industrial Processes and Product Use)",4,203,96.27,2022,53,100
+"7","EN.GHG.CO2E.WA.KT","Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = Waste)",3.18275,97,38.81,2022,53,47.78
+"8","EN.GHG.METH.AG.KT.CE","Greenhouse gas emissions: Methane (CH4) (Sector = Agriculture)",4,193,94.78,2022,53,95.07
+"9","EN.GHG.METH.EG.KT.CE","Greenhouse gas emissions: Methane (CH4) (Sector = Energy)",4,197,94.03,2022,53,97.04
+"10","EN.GHG.METH.IN.KT.CE","Greenhouse gas emissions: Methane (CH4) (Sector = Industrial Processes and Product Use)",3.0705,94,35.82,2022,53,46.31
+"12","EN.GHG.METH.WA.KT.CE","Greenhouse gas emissions: Methane (CH4) (Sector = Waste)",4,203,96.27,2022,53,100
+"13","EN.GHG.NOXE.AG.KT.CE","Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Agriculture)",4,193,94.78,2022,53,95.07
+"14","EN.GHG.NOXE.EG.KT.CE","Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Energy)",4,197,94.03,2022,53,97.04
+"15","EN.GHG.NOXE.IN.KT.CE","Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Industrial Processes and Product Use)",4,200,94.78,2022,53,98.52
+"17","EN.GHG.NOXE.WA.KT.CE","Greenhouse gas emissions: Nitrous Oxide (N2O) (Sector = Waste)",4,198,94.78,2022,53,97.54
+"4","EN.GHG.CO2E.LU.KT.CE","Greenhouse gas emissions: Carbon Dioxide (CO2) (Sector = LULUCF)",3.86190476190476,185,93.28,2020,21,36.11
+"22","EN.GHG.TOTL.PC","Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per capita",4,203,96.27,2022,53,100
+"5","EN.GHG.CO2E.PC","Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per capita",4,203,96.27,2022,53,100
+"23","EN.GHG.TOTL.PP.GD","Greenhouse gas emissions: All Kyoto Gases (Total excluding LULUCF) per 2021 PPP $ of GDP",4,203,96.27,2022,53,100
+"6","EN.GHG.CO2E.PP.GD","Greenhouse gas emissions: Carbon Dioxide (CO2) (Total excluding LULUCF) per 2021 PPP $ of GDP",4,203,96.27,2022,53,100

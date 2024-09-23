@@ -1,0 +1,490 @@
+---
+title: "WDI New Indicator Tool"
+format: 
+  html:
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+---
+
+# Introduction
+
+This tool is meant to aid discussions around whether a potential new indicator is a good fit for the WDI. It provides a set of quantitative metrics for new indicators and compares these metrics to other WDI indicators.
+
+## WDI quantitative criteria
+
+To quantify the quality of a WDI database indicator, we have created some metrics that help us understand the temporal coverage, geographical coverage, completeness, and usage of the indicator. We have created the following metrics:
+
+a.  **Number of economies** (n_country): This metric measures the total number of economies for which data is available for the indicator.\
+
+b.  **Share of low- and middle-income economies** (p_lmic): This metric measures the percent of low- and middle-income economies for which data is available. We use the total number of LMICs as of today as the denominator.
+
+c.  **Absolute latest year** (yearlatest): This metric measures the most recent year of data available for an indicator.\
+
+d.  **Median latest year** (yearleatest_median): This metric takes the most recent year of data available for each country for the indicator and then calculate the median.\
+
+e.  **Span of years** (span_years): This metric measures the total number of years for which data is available for this indicator. We take the first year data and latest year for which any data is available and calculating the span between these years.
+
+f.  **Non-missing data:** This metric measures the share of non-missing data within its availability. The span is restricted to the indicator span and country coverage previously calculated, and not the span and coverage of the WDI.
+
+g.  **Unique visitors:** This metric measures the number of unique visitors in one year which is calculated using the API for the Adobe Analytics platform.
+
+Below a set of thresholds are proposed for assessing indicator quality. The thresholds were defined by the WDI criteria team based on looking for natural cuts in the data for each metric and based on internal team discussion on reasonable standards. The cuts roughly correspond to the 1st, 2nd, 5th, 10th, and 50th percentiles among indicators in the WDI for each metric.  These thresholds will be held constant for at least 2-3 years, so that additions or subtractions of indicators from the WDI do not lead to fluctuations in the thresholds.  After a period of 2-3 years, these numbers can be updated.
+
+Table. Criteria Thresholds under Low, Loose, Median, Stringent, and High Scenarios
+
+| Metric                                        | **Low** | **Loose** | **Median** | **Stringent** | **High** |
+|-----------------------------------------------|---------|-----------|------------|---------------|----------|
+| **Number of economies**                       | 30      | 50        | 80         | 100           | 180      |
+| **Share of low- and middle-income economies** | 10      | 30        | 40         | 65            | 90       |
+| **Span of years**                             | 3       | 6         | 10         | 15            | 50       |
+| **Absolute latest year**                      | 2010    | 2011      | 2015       | 2016          | 2019     |
+| **Median latest year**                        | 2008    | 2010      | 2012       | 2015          | 2019     |
+| **Non-missing data**                          | 8       | 10        | 12         | 15            | 60       |
+| **Unique visitors**                           | 50      | 65        | 120        | 200           | 2000     |
+
+Indicators that fall in the low or loose category would be in danger of being removed from the WDI, as they are in the very bottom percentiles among indicators. An argument would need to be made on other grounds for keeping these indicators or some explanation for the poor performance should be made. Indicators that fall in the medium or stringent categories could be kept if they excel in other areas. A formalized scoring system is described in further detail in the appendix.
+
+### Adding New Indicators
+
+For new indicators, the same criteria would apply. As a first step for including a new indicator, it would be important to check on the license for using the data to ensure that the data can be made open, with limited or no restrictions. Then it would be important to check how the indicator fits into the set of indicators already included. Does it add to a theme that is under covered in the WDI? It would be important to flag whether the indicator fits into important World Bank, sectoral, or UN SDG goals. If so, then the geographic and temporal coverage of the indicator should be assessed. Last but not least, it would be important to make sure the indicator is of high quality and has clear and comprehensive metadata to explain what is being measured and why. A topic expert will be important to consult to understand whether the methodology for producing the indicator is of the highest quality, and the metadata will need to be curated to explain this to a general audience. An important consideration is whether the indicator is produced by the World Bank itself, the IMF, or another UN agency, rather than a third party, as it is guaranteed to have gone through a rigorous quality control process.
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(wbstats)
+library(flextable)
+library(here)
+library(DT)
+library(ggbeeswarm)
+library(plotly)
+library(readxl)
+
+#path
+dir <- "C:/Users/wb599047/OneDrive - WBG/Documents/DCS_update/ILO/Stocktaking_Q12024/wdi-criteria/labor"
+
+#parameters
+end_date=2023
+
+```
+
+```{r}
+#| label: data
+
+#### GET DATA ####
+# wdi_score_table <- read_csv(paste0(dir, "/WDI_score_table.csv"))
+
+wdic <- read.csv(paste0(dir,"/wdic.csv"))
+scen <- read.csv(paste0(dir,"/scenarios.csv"))
+cld <- read.csv(paste0(dir, "/cld_data.csv"))
+neet <- read.csv(paste0(dir, "/neet_data.csv"))
+colnames(scen)[1] <- "scenario"
+
+source(paste0(dir,"/plot-density-function.R"))
+
+
+countrymeta <- wbstats::wb_countries()
+# Make LMIC country list
+lmics <- unique(countrymeta[which(
+  countrymeta$income_level == 'Low income' |
+    countrymeta$income_level == 'Lower middle income' |
+    countrymeta$income_level == 'Upper middle income'),]$iso3c)
+
+```
+
+```{r}
+#| label: fun
+
+score_fun  <- function(dataset) {
+  
+  dt <-dataset %>%
+  # get(dataset) %>%
+        # mutate(ncountry_score = n_country/217*100,
+        # plmic_score = p_lmic,
+        # yearlatest_score = (yearlatest - 2008)/(end_date-2008)*100,
+        # yearlatestmedian_score = (yearlatest_median - 2001)/(end_date-2001)*100,
+        # spanyears_score = span_years/(end_date-1960)*100,
+        # nonmiss_score = nonmiss,
+        # frontier_score = (ncountry_score + plmic_score + yearlatest_score + yearlatestmedian_score + spanyears_score + nonmiss_score)/6
+        # ) %>%
+      # mutate(
+      #     country_score=case_when(
+      #       n_country < scen$n_country[1] ~ 1,
+      #       between(n_country,scen$n_country[1],scen$n_country[2])  ~ 2,
+      #       between(n_country,scen$n_country[2],scen$n_country[3]) ~ 3,
+      #       n_country >= scen$n_country[3] ~ 4
+      #       )   ,
+      #     p_lmic_score=case_when(
+      #       p_lmic < scen$p_lmic[1] ~ 1,
+      #       between(p_lmic,scen$p_lmic[1],scen$p_lmic[2])  ~ 2,
+      #       between(p_lmic,scen$p_lmic[2],scen$p_lmic[3]) ~ 3,
+      #       p_lmic >= scen$p_lmic[3] ~ 4
+      #     )   ,
+      #     yearlatest_median_score=case_when(
+      #       yearlatest_median < scen$yearlatest_median[1] ~ 1,
+      #       between(yearlatest_median,scen$yearlatest_median[1],scen$yearlatest_median[2])  ~ 2,
+      #       between(yearlatest_median,scen$yearlatest_median[2],scen$yearlatest_median[3]) ~ 3,
+      #       yearlatest_median >= scen$yearlatest_median[3] ~ 4
+      #     )   ,
+      #     yearlatest_score=case_when(
+      #       yearlatest < scen$yearlatest[1] ~ 1,
+      #       between(yearlatest,scen$yearlatest[1],scen$yearlatest[2])  ~ 2,
+      #       between(yearlatest,scen$yearlatest[2],scen$yearlatest[3]) ~ 3,
+      #       yearlatest >= scen$yearlatest[3] ~ 4
+      #     )   ,
+      #     span_years_score=case_when(
+      #       span_years < scen$span_years[1] ~ 1,
+      #       between(span_years,scen$span_years[1],scen$span_years[2])  ~ 2,
+      #       between(span_years,scen$span_years[2],scen$span_years[3]) ~ 3,
+      #       span_years >= scen$span_years[3] ~ 4
+      #     )  ,
+      #     nonmiss_score=case_when(
+      #       nonmiss < scen$nonmiss[1] ~ 1,
+      #       between(nonmiss,scen$nonmiss[1],scen$nonmiss[2])  ~ 2,
+      #       between(nonmiss,scen$nonmiss[2],scen$nonmiss[3]) ~ 3,
+      #       nonmiss >= scen$nonmiss[3] ~ 4
+      #     )
+      #   ) %>%
+      mutate( #do a Distance to Threshold approach, where the frontiers are set by the thresholds
+          country_score_hybrid=case_when(
+            n_country < scen$n_country[4] ~ 0,
+            between(n_country,scen$n_country[4],scen$n_country[1])  ~ (n_country-scen$n_country[4])/(scen$n_country[1]-scen$n_country[4]),
+            between(n_country,scen$n_country[1],scen$n_country[2])  ~ 1+(n_country-scen$n_country[1])/(scen$n_country[2]-scen$n_country[1]),
+            between(n_country,scen$n_country[2],scen$n_country[3]) ~ 2+(n_country-scen$n_country[2])/(scen$n_country[3]-scen$n_country[2]),
+            between(n_country,scen$n_country[3],scen$n_country[5]) ~ 3 + (n_country-scen$n_country[3])/(scen$n_country[5]-scen$n_country[3]),
+            n_country > scen$n_country[5] ~ 4,
+            )   ,
+          p_lmic_score_hybrid=case_when(
+            p_lmic < scen$p_lmic[4] ~ 0,
+            between(p_lmic,scen$p_lmic[4],scen$p_lmic[1])  ~ (p_lmic-scen$p_lmic[4])/(scen$p_lmic[1]-scen$p_lmic[4]),
+            between(p_lmic,scen$p_lmic[1],scen$p_lmic[2])  ~ 1+(p_lmic-scen$p_lmic[1])/(scen$p_lmic[2]-scen$p_lmic[1]),
+            between(p_lmic,scen$p_lmic[2],scen$p_lmic[3]) ~ 2+(p_lmic-scen$p_lmic[2])/(scen$p_lmic[3]-scen$p_lmic[2]),
+            between(p_lmic,scen$p_lmic[3],scen$p_lmic[5]) ~ 3 + (p_lmic-scen$p_lmic[3])/(scen$p_lmic[5]-scen$p_lmic[3]),
+            p_lmic > scen$p_lmic[5] ~ 4,
+          )   ,
+          yearlatest_median_score_hybrid=case_when(
+            yearlatest_median < scen$yearlatest_median[4] ~ 0,
+            between(yearlatest_median,scen$yearlatest_median[4],scen$yearlatest_median[1])  ~ (yearlatest_median-scen$yearlatest_median[4])/(scen$yearlatest_median[1]-scen$yearlatest_median[4]),
+            between(yearlatest_median,scen$yearlatest_median[1],scen$yearlatest_median[2])  ~ 1+(yearlatest_median-scen$yearlatest_median[1])/(scen$yearlatest_median[2]-scen$yearlatest_median[1]),
+            between(yearlatest_median,scen$yearlatest_median[2],scen$yearlatest_median[3]) ~ 2+(yearlatest_median-scen$yearlatest_median[2])/(scen$yearlatest_median[3]-scen$yearlatest_median[2]),
+            between(yearlatest_median,scen$yearlatest_median[3],scen$yearlatest_median[5]) ~ 3 + (yearlatest_median-scen$yearlatest_median[3])/(scen$yearlatest_median[5]-scen$yearlatest_median[3]),
+            yearlatest_median > scen$yearlatest_median[5] ~ 4,
+          )   ,
+          yearlatest_score_hybrid=case_when(
+            yearlatest < scen$yearlatest[4] ~ 0,
+            between(yearlatest,scen$yearlatest[4],scen$yearlatest[1])  ~ (yearlatest-scen$yearlatest[4])/(scen$yearlatest[1]-scen$yearlatest[4]),
+            between(yearlatest,scen$yearlatest[1],scen$yearlatest[2])  ~ 1+(yearlatest-scen$yearlatest[1])/(scen$yearlatest[2]-scen$yearlatest[1]),
+            between(yearlatest,scen$yearlatest[2],scen$yearlatest[3]) ~ 2+(yearlatest-scen$yearlatest[2])/(scen$yearlatest[3]-scen$yearlatest[2]),
+            between(yearlatest,scen$yearlatest[3],scen$yearlatest[5]) ~ 3 + (yearlatest-scen$yearlatest[3])/(scen$yearlatest[5]-scen$yearlatest[3]),
+            yearlatest > scen$yearlatest[5] ~ 4,
+          )   ,
+          span_years_score_hybrid=case_when(
+            span_years < scen$span_years[4] ~ 0,
+            between(span_years,scen$span_years[4],scen$span_years[1])  ~ (span_years-scen$span_years[4])/(scen$span_years[1]-scen$span_years[4]),
+            between(span_years,scen$span_years[1],scen$span_years[2])  ~ 1+(span_years-scen$span_years[1])/(scen$span_years[2]-scen$span_years[1]),
+            between(span_years,scen$span_years[2],scen$span_years[3]) ~ 2+(span_years-scen$span_years[2])/(scen$span_years[3]-scen$span_years[2]),
+            between(span_years,scen$span_years[3],scen$span_years[5]) ~ 3 + (span_years-scen$span_years[3])/(scen$span_years[5]-scen$span_years[3]),
+            span_years > scen$span_years[5] ~ 4,
+          )    ,
+          nonmiss_score_hybrid=case_when(
+            nonmiss < scen$nonmiss[4] ~ 0,
+            between(nonmiss,scen$nonmiss[4],scen$nonmiss[1])  ~ (nonmiss-scen$nonmiss[4])/(scen$nonmiss[1]-scen$nonmiss[4]),
+            between(nonmiss,scen$nonmiss[1],scen$nonmiss[2])  ~ 1+(nonmiss-scen$nonmiss[1])/(scen$nonmiss[2]-scen$nonmiss[1]),
+            between(nonmiss,scen$nonmiss[2],scen$nonmiss[3]) ~ 2+(nonmiss-scen$nonmiss[2])/(scen$nonmiss[3]-scen$nonmiss[2]),
+            between(nonmiss,scen$nonmiss[3],scen$nonmiss[5]) ~ 3 + (nonmiss-scen$nonmiss[3])/(scen$nonmiss[5]-scen$nonmiss[3]),
+            nonmiss > scen$nonmiss[5] ~ 4,
+          )
+        ) %>%    
+        # mutate(loose=if_else( #calculate whether indicator would fall in loose, median, or stringent as well
+        #         (n_country < scen$n_country[1] |
+        #          p_lmic     < scen$p_lmic[1] |
+        #          yearlatest_median  < scen$yearlatest_median[1] |
+        #          yearlatest  < scen$yearlatest[1] |
+        #          nonmiss  < scen$nonmiss[1] |
+        #          (yearlatest < 2015 & span_years < scen$span_years[1]))
+        #           ,"Yes", "No"),
+        #       median=if_else(
+        #         (n_country < scen$n_country[2] |
+        #          p_lmic     < scen$p_lmic[2] |
+        #          yearlatest_median  < scen$yearlatest_median[2] |
+        #          yearlatest  < scen$yearlatest[2] |
+        #          nonmiss  < scen$nonmiss[2] |
+        #          (yearlatest < 2015 & span_years < scen$span_years[2]))
+        #           ,"Yes", "No"),
+        #       stringent=if_else(
+        #         (n_country < scen$n_country[3] |
+        #          p_lmic     < scen$p_lmic[3] |
+        #          yearlatest_median  < scen$yearlatest_median[3] |
+        #          yearlatest  < scen$yearlatest[3] |
+        #          nonmiss  < scen$nonmiss[3] |
+        #          (yearlatest < 2015 & span_years < scen$span_years[3]))
+        #           ,"Yes", "No")
+        # ) %>%      
+  
+        mutate(
+               # threshold_score=(country_score+p_lmic_score+yearlatest_median_score+yearlatest_score+ span_years_score+ nonmiss_score)/6,
+  
+               hybrid_score=(country_score_hybrid+p_lmic_score_hybrid+yearlatest_median_score_hybrid+yearlatest_score_hybrid+ span_years_score_hybrid + nonmiss_score_hybrid )/6,
+               ) %>%
+         # mutate(
+         #       geographic_score= (country_score+p_lmic_score)/2,
+         #       temporal_score=(yearlatest_median_score+yearlatest_score+ span_years_score)/3,
+         #       completeness_score=nonmiss_score,
+         #       threshold_score_wgtd=(geographic_score+temporal_score+completeness_score)/3
+         #       ) %>%   
+        mutate(
+               geographic_score_hybrid= (country_score_hybrid+p_lmic_score_hybrid)/2,
+               temporal_score_hybrid=(yearlatest_median_score_hybrid+yearlatest_score_hybrid+ span_years_score_hybrid)/3,
+               completeness_score_hybrid=nonmiss_score_hybrid,
+               hybrid_score_wgtd=(geographic_score_hybrid+temporal_score_hybrid+completeness_score_hybrid)/3,
+               hybrid_score_wgtd2=(geographic_score_hybrid+temporal_score_hybrid)/2
+               ) 
+}
+
+colnames(scen)[1] <- "scenario"
+
+```
+
+## Child labor and NEET 
+
+Some labor indicators for consideration are child labor and NEET (ILO modeled estimates) indicators. Scores for these indicators are below.
+
+```{r}
+#| label: lpov
+
+
+#add child labor data
+# lpov_meta <- read_excel(paste0(dir, '/lpv_edstats_update2022.xls'), sheet='lpv_metadata') %>%
+#   rename(indicator=Indicator)
+# 
+# lpov_indicator_df <- read_excel(paste0(dir, '/lpv_edstats_update2022.xls'), sheet='WDI_indicators')  %>%
+#   left_join(lpov_meta) %>%
+#   filter(!is.na(value)) %>%
+#   rename(
+#     Indicator.Code=indicator,
+#     Indicator.Name=IndicatorName,
+#     Country.Code=countrycode,
+#     Year=year
+#   ) 
+# 
+# lpov_indicator_c <- lpov_indicator_df %>%
+#   group_by(Indicator.Code, Country.Code) %>%
+#   mutate(percountry_obs = n(),
+#          percountry_maxyear = max(Year),
+#          percountry_minyear = min(Year),
+#          percountry_meanyear = mean(Year)) %>%
+#   ungroup() %>%
+#   group_by(Indicator.Code, Indicator.Name) %>%
+#   summarise(total_obs = n(),
+#             total_obs_5yr=sum(Year>=(end_date-5)),
+#             yearmean = mean(Year),
+#             yearmedian = median(Year),
+#             n_country  = n_distinct(Country.Code),          # Number of countries covered
+#             n_years    = n_distinct(Year),                  # Number of years covered
+#             countryobs_avg = mean(percountry_obs),          # Average number of obs per country
+#             countryobs_max = max(percountry_obs),           # Max number of obs per country
+#             yearlatest_mean = mean(percountry_maxyear),     # Mean latest year per country
+#             yearlatest_median = median(percountry_maxyear), # Median latest year per country
+#             yearlatest = max(percountry_maxyear),           # Latest year
+#             yearfirst_mean = mean(percountry_minyear),      # Mean first year per country
+#             yearfirst_median = median(percountry_minyear),  # Median first year per country
+#             yearfirst = min(percountry_minyear),            # First year
+#             yearmean_mean = mean(percountry_meanyear),
+#             yearmean_median = median(percountry_meanyear),
+#             n_lmic     = sum(unique(Country.Code) %in% lmics)) %>%
+#   mutate(span_years = yearlatest - yearfirst + 1,
+#          cov_years  = round(100 * ifelse(span_years == 0, 0, 
+#                                          (n_years - 1) / span_years), 2)
+#   ) %>%
+#   mutate(nonmiss = round(100 * total_obs/(n_country*span_years), 2),
+#          nonmiss_tot = round(100 * total_obs/(max(n_country)*max(span_years)), 2),
+#          nonmiss_5yr=round(100 * total_obs_5yr/(n_country*(5)), 2)
+#   )
+# 
+# # Find what percentage of n_countries are lmic
+# tmp <- lpov_indicator_df %>% 
+#   select(Indicator.Code, Country.Code) %>%
+#   distinct() %>%
+#   group_by(Indicator.Code) %>%
+#   summarise(p_lmic = round(100 * (
+#     sum(ifelse(Country.Code %in% lmics, 1, 0)) / length(lmics)), 2))
+# 
+# # Merge represtativeness with main
+# lpov_indicator_c <- merge(lpov_indicator_c, tmp, by = 'Indicator.Code')
+
+
+labor_score_table <- score_fun(cld) %>% mutate(cat="Child labor") %>%
+  bind_rows(score_fun(neet) %>% mutate(cat="NEET"))
+
+labor_out <- labor_score_table %>%
+  mutate(Indicator.Name=ifelse(grepl("ZS",Indicator.Code),paste0(Indicator.Name,", total"),
+                               ifelse(grepl("MA",Indicator.Code),paste0(Indicator.Name,", male"),
+                                      ifelse(grepl("FE",Indicator.Code), paste0(Indicator.Name,", female"),NA)))) %>%
+  select(Indicator.Name,score=hybrid_score_wgtd,n_country,p_lmic,yearlatest,yearlatest_median,span_years,nonmiss)
+  
+# write.csv(labor_out,"C:/Users/wb599047/OneDrive - WBG/Documents/DCS_update/ILO/Stocktaking_Q12024/Indicator proposal/labor_table.csv",row.names = F)
+
+wdi_score_table<-score_fun(wdic)
+
+```
+
+```{r}
+#| label: scoringlpov
+#| column: screen-inset-shaded
+labor_score_table %>%
+    select(Indicator.Code, Indicator.Name, hybrid_score_wgtd, n_country, p_lmic, yearfirst, yearlatest_median, yearlatest,countryobs_avg,span_years, nonmiss) %>%
+      #arrange(hybrid_score_wgtd) %>%
+      DT::datatable(
+               rownames=FALSE,
+               colnames = c("", "Indicator", "Criteria Index Score", "No. Countries", 'LMIC Coverage (%)', 'First Year', 'Last Year (Median)', 'Last Year (Max)', 'Average number of obs per country', "Span of years",'Share of non-missing data'), #, 'Share of non-missing data past 5 years'),
+               class='cell-border stripe',
+               escape = FALSE,
+               extensions = c ('Buttons', 'FixedHeader'), 
+               options=list(
+                 dom = 'Bfrtip',
+                 #paging = FALSE,
+                 buttons = c('copy', 'csv', 'excel'),
+                 scroller = T,
+                 scrollX = T,
+                 scrollY = T
+                 ),
+                 callback=JS("table.on( 'order.dt search.dt', function () {
+                                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                                      cell.innerHTML = i+1;});}).draw();")
+               ) %>%
+   # formatStyle(columns=c('loose', 'median', 'stringent'), 
+   #             backgroundColor = styleEqual(
+   #               levels=c("Yes", "No"),
+   #               values=c("#ae2012", "#005f73")
+   #               ),
+   #             color="white"
+   #             ) %>%
+   formatRound(columns=c('n_country', 'p_lmic', 'nonmiss',  'countryobs_avg', 'hybrid_score_wgtd'), digits=2) 
+
+```
+
+## Comparison to WDI
+
+Scores for suggested labor indicator are compared to the full set of WDI indicators below.
+
+```{r}
+#| label: tbl-wdicompare
+#| tbl-cap: Comparison of New Indicators to WDI
+#| column: page
+
+metric_nm <- 'hybrid_score_wgtd'
+metric_des <- "Weighted Distance to Threshold Score"
+
+breakup_tab_mod_df <- labor_score_table %>%
+  rename(name_flag=cat)%>%
+  bind_rows(wdi_score_table %>% mutate(name_flag="WDI Indicators")) %>%
+  rename('metric'= !!metric_nm) %>%
+  group_by(name_flag) %>%
+  summarise(metric_mn=mean(metric, na.rm=TRUE),
+            metric_min=min(metric, na.rm=TRUE),
+            metric_max=max(metric, na.rm=TRUE),
+            indicator_min=Indicator.Name[which.min(metric)],
+            indicator_max=Indicator.Name[which.max(metric)],
+            ) %>%
+  #arrange(-metric_mn) %>%
+  transmute(
+    name_flag=name_flag,
+    metric=round(metric_mn,2),
+    min=round(metric_min,2),
+    indicator_min=indicator_min,
+    max=round(metric_max,2),
+    indicator_max=indicator_max
+  ) %>%
+  mutate(name_flag=factor(name_flag, levels=c("Child labor","NEET","WDI Indicators")))
+
+flextable(breakup_tab_mod_df) %>%
+  add_header_lines('Average Indicator Score For New Indicators & WDI Indicators') %>%
+  set_header_labels(
+    values=c(name_flag='Status',
+             metric=metric_des,
+             min="Min",
+             indicator_min= " ",
+             max="Max",
+             indicator_max=" ")
+  ) %>%
+  theme_vanilla() %>%
+  autofit()
+
+
+```
+
+```{r}
+#| label: fig-plotly
+#| fig-cap: Comparison of New Indicators to WDI
+
+
+#beeswarm plot
+
+p <- labor_score_table %>%
+  rename(name_flag=cat) %>%
+  bind_rows(wdi_score_table %>% mutate(name_flag="WDI Indicators")) %>%
+  rename('metric'= !!metric_nm) %>%
+  mutate(name_flag=factor(name_flag, levels=breakup_tab_mod_df$name_flag)) %>%
+  ggplot(aes(x=name_flag, y=metric, group=Indicator.Name)) +
+    geom_beeswarm(color='#457b9d', alpha=0.5) +
+    geom_segment(data=breakup_tab_mod_df, aes( xend=after_stat(x)+.3, yend=after_stat(y), group=""), color='black', size=1)  +
+    geom_segment(data=breakup_tab_mod_df, aes( xend=after_stat(x)-.3, yend=after_stat(y), group=""), color='black', size=1)  +
+    geom_text(data=breakup_tab_mod_df, aes(label=paste0("Mean: ",round(metric, 1)), group=""), vjust=-2.5, hjust=1.5, color='black', size=4) +
+    theme_bw() +
+    expand_limits(y=c(0,4)) +
+    xlab('Status') +
+    ylab(metric_des) +
+    coord_flip() +
+      labs(title='Indicator Scores for New Indicators & WDI Indicators',
+                   caption='Black lines represent the mean by status.')
+
+ggplotly(p)
+
+```
+
+# Appendix
+
+### Distance to Threshold Scoring Approach
+
+A third approach to scoring combines some aspects of the distance to frontier scoring method and the threshold scoring method. As with the threshold scoring method, a set of loose, median, and stringent scenarios are used to score the indicators.
+
+A flaw with the threshold scoring approach is that the discrete scoring on the 1-4 scale resulted in many tied scores for indicators. The Distance to Threshold approach rectifies this flaw by extending the discrete 1-4 scale to a continuous scale between 0 and 4. It does so by incorporating some of the elements of the distance to frontier method, where upper limits and lower limits are set based on each scenario (loose, median, stringent) and an indicator is scored by its distance between the upper and lower limit.
+
+Additionally, two new categories are added: "Low" and "High", which help smooth the distribution of scores below the "Loose" and above the "Stringent" scenarios. Indicators scoring below the "Low" are automatically given the lower possible score '0', which indicators scoring above the "High" are automatically given the highest possible score '4'. The "Low" and "High" categories help account for outliers in the distribution of the metrics that may impact the scoring. To give a specific example, on unique visitors, suppose there is an indicator that receives over a million unique visitors in a year. In fact, the indicator "GDP growth (annual %)" does receive this total in a year. If a "High" category was not set, then this outlier would cause a large amount of bunching of scores for all indicators above the "Stringent" group, as the vast majority of indicators are very far from this indicator with 1 million visits. Therefore, a High category is introduced, where any indicator scoring above this limit will automatically receive 4 points, and indicators under this High will not see as much bunching due to the outlier observation.
+
+For each metric, a score of 0-4 was produced based on the following scoring. First some notation. Let $\alpha_l$ be the lower limit and $\alpha_u$ be the upper limit. Also let $\gamma$ be the value of a metric (for instance the number of countries). Then the scores are the following:
+
+-   Metric value falls below the "Low" scenario threshold
+    -   Lower limit : Low possible value for any indicator
+    -   Upper limit : value of the "Low" scenario
+    -   Score: 0
+-   Metric value falls below the "Loose" scenario threshold and above "Low"
+    -   Lower limit : value of the "Low" scenario
+    -   Upper limit : value of the "Loose" scenario
+    -   Score: $(\gamma-\alpha_l)/(\alpha_u - \alpha_l)$
+-   Metric value falls between the "Loose" and "Median" threshold
+    -   Lower limit : value of the "Loose" scenario
+    -   Upper limit : value of the "Median" scenario
+    -   Score: 1+$(\gamma-\alpha_l)/(\alpha_u - \alpha_l)$
+-   Metric value falls between the "Median" and "Stringent" threshold
+    -   Lower limit : value of the "Median" scenario
+    -   Upper limit : value of the "Stringent" scenario
+    -   Score: 2+$(\gamma-\alpha_l)/(\alpha_u - \alpha_l)$
+-   Metric value above the "Stringent" but below "High" threshold.
+    -   Lower limit : value of the "Stringent" scenario
+    -   Upper limit : value of the "High" scenario
+    -   Score: 3 +$(\gamma-\alpha_l)/(\alpha_u - \alpha_l)$
+-   Metric value falls above the "High" scenario threshold
+    -   Lower limit : value of the "High" scenario
+    -   Upper limit : Maximum possible value for any indicator
+    -   Score: 4
+
+The score for indicator on a specific metric (say number of countries) is the distance from the lower limit divided by the total distance between the upper and lower limit plus a constant. The constant distinguishes between different thresholds. Note that the value for is always between 0 and 1 and that indicators with metrics closer to the upper limit are closer to 1 and thus receive higher scores. This scoring system results in continuous scale between 0 and 4.
+
+To give a specific example based on the number of countries criteria, an indicator with data for 21 countries would receive a score of $(21-20)/(35-20)=0.067$. An indicator with data for 45 countries would receive a score of $1+(45-35)/(50-35)=1.667$. An indicator with data for 200 countries would receive a score of $3+(190-65)/(200-65)=3.93$
+
+The result of this scoring is that each indicator has a 0-4 score along all 9 of the scoring metrics (Number of economies, Share of low- and middle-income economies, Absolute latest year, Median latest year, Span of years, Non-missing data, Unique visitors, metadata availability, metadata length).
+
+An overall score is then computed by taking the weighted average the scores across the 9 metrics with higher scores meaning the indicator performs better on average across the nine metrics. The scores are produced using the nested structure described above with five categories: Geographic Coverage, Temporal Coverage, Completeness, Usage. The weights are 1/5 to indicators grouped in the Geographic Coverage category, 1/5 to Temporal Coverage, 1/5 to Completeness, 1/5 to Usage, and 1/5 to metadata quality. Within each category, the category scores are produced taking the unweighted average of metrics in that category.

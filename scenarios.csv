@@ -1,0 +1,6 @@
+﻿Scenario,n_country,p_lmic,yearlatest_median,yearlatest,span_years,uniquevisitors,nonmiss,metadata_availability,metadata_length
+Loose,50,30,2010,2011,3,50,8,2,100
+Median,80,40,2012,2015,10,120,12,3,150
+Stringent,100,65,2015,2016,15,200,15,4,200
+Minimum,30,10,2008,2010,3,50,8,1,50
+Maximum,180,90,2019,2019,50,2000,60,5,500
