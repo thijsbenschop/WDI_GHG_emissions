@@ -1,7 +1,9 @@
-# Title: 20230918_prepare_EDGAR_data_for_WDI.r
+# Title: 20240918_prepare_EDGAR_data_for_WDI.r
 # Description: Script to prepare emissions data from PIK for ingestion in WDI
 # Date: 5/20/2023
 # Updated: 9/18/2024 -> to match csc data from climate group
+# Updated: 10/15/2024 -> create 1990 dummies for change + replace World aggregates
+# + add totals including LULUCF
 # Author: Thijs Benschop
 
 rm(list=ls())
@@ -11,7 +13,6 @@ library(dplyr)
 library(data.table)
 library(ggplot2)
 library(readxl)
-library(readxl)
 library(openxlsx)
 library(tidyr)
 setwd("C:/Users/wb460271/OneDrive - WBG/Documents/GitHub/WDI_GHG_emissions")
@@ -19,6 +20,7 @@ rm(list = ls())
 
 options(scipen=999)
 
+#### Load EDGAR data ####
 # Version 8.0 of EDGAR data // Published November 2023
 # Data downloaded from https://edgar.jrc.ec.europa.eu/dataset_ghg80
 # One dataset per GHG + total
@@ -83,26 +85,43 @@ setnames(EDGAR_long, "ipcc_code_2006_for_standard_report", "category")
 setnames(EDGAR_long, "Country_code_A3", "ISO3")
 colnames(EDGAR_long)
 
-#### Load Grassi LULUCF data
+#### Load Grassi LULUCF data ####
 GRASSI <- as.data.table(read_xlsx("./Data_private/Grassi/National inventories LULUCF data 2000-2020 (Dec 2022).xlsx",
           sheet = "Table 5",
-          skip = 3,
-          n_max = 195))
+          skip = 3)) #,
+#          n_max = 195))
 colnames(GRASSI)
+
+table(GRASSI$`gap-filling`, useNA = "ifany")
+GRASSI <- GRASSI %>% filter(`gap-filling` == "gap-filled") # remove headings and white lines
+
+table(GRASSI$`LAND CATEGORY`, useNA = "ifany")
+#table(GRASSI$`UNFCCC country`, useNA = "ifany")
+
 GRASSI[, "Av.. 2000-2020" := NULL] # drop 2000-2020
-GRASSI[, c("LAND CATEGORY", "gap-filling", "UNFCCC country", "Unit") := NULL] # drop 2000-2020
+GRASSI[, c("gap-filling", "UNFCCC country", "Unit") := NULL] # keep 2000-2020
 
 # Convert data in long format
-GRASSI_long <- melt(GRASSI, id.vars = c("country code"),
+GRASSI_long <- melt(GRASSI, id.vars = c("country code", "LAND CATEGORY"),
                       variable.name = "year",
                       value.factor = FALSE, 
                     variable.factor = FALSE)
-GRASSI_long[, c("ISO3",   "year",   "Substance",    "category", "value", "fossil_bio") :=
-              .(`country code`, year, "LULUCF", 0, value, "bio")]
-GRASSI_long[, `country code` := NULL]
-setcolorder(GRASSI_long, c("ISO3", "category", "Substance", "fossil_bio", "year", "value"))
+# GRASSI_long[, c("ISO3",   "year",   "Substance",    "category", "value", "fossil_bio") :=
+#               .(`country code`, year, "LULUCF", 0, value, "bio")]
+# GRASSI_long[, `country code` := NULL]
+# setcolorder(GRASSI_long, c("ISO3", "category", "Substance", "fossil_bio", "year", "value"))
 
-#EDGAR_long <- rbind(EDGAR_long, GRASSI_long)
+GRASSI_long <- GRASSI_long %>% mutate(Series = case_when(
+  `LAND CATEGORY` == "DEFORESTATION" ~ "EN.GHG.CO2.LU.DF.MT.CE.AR5", # Carbon dioxide (CO2) net fluxes from LULUCF - Deforestation (Mt CO2e)    
+  `LAND CATEGORY` == "FOREST LAND" ~ "EN.GHG.CO2.LU.FL.MT.CE.AR5", # Carbon dioxide (CO2) net fluxes from LULUCF - Forest Land (Mt CO2e)     
+  `LAND CATEGORY` == "LULUCF net" ~ "EN.GHG.CO2.LU.MT.CE.AR5",	   # Carbon dioxide (CO2) net fluxes from LULUCF - Total excluding fires (Mt CO2e)  
+  `LAND CATEGORY` == "ORGANIC SOILS" ~ "EN.GHG.CO2.LU.OS.MT.CE.AR5", # Carbon dioxide (CO2) net fluxes from LULUCF - Organic Soil (Mt CO2e)
+  `LAND CATEGORY` == "OTHER LAND USES" ~ "EN.GHG.CO2.LU.OL.MT.CE.AR5" # Carbon dioxide (CO2) net fluxes from LULUCF - Other Land (Mt CO2e)
+))
+
+GRASSI_long[, c("ISO3",   "year",   "Substance",    "category", "value", "fossil_bio", "Series") :=
+               .(`country code`, year, "CO2", `LAND CATEGORY`, value, "bio", Series)]
+GRASSI_long
 
 ################################################################################
 # Check which WDI countries available
@@ -140,18 +159,120 @@ EDGAR_countries[!(EDGAR_countries %in% WDI_countries$ISO3)] # list of missing co
 # WLF: Wallis and Futuna
 
 GRASSI_countries <- unique(GRASSI_long$ISO3)
-length(GRASSI_countries) # 223 countries
-table(WDI_countries$ISO3 %in% GRASSI_countries) # 203 WDI countries available in EDGAR
-WDI_countries[!(ISO3 %in% GRASSI_countries)] # list of missing countries (not in EDGAR data)
+length(GRASSI_countries) # 197 countries
+table(WDI_countries$ISO3 %in% GRASSI_countries) # 193 WDI countries available in GRASSI
+WDI_countries[!(ISO3 %in% GRASSI_countries)] # list of missing countries (not in GRASSI data)
 # are these countries/territories included in other countries? -> need to combine countries?
 table(GRASSI_countries %in% WDI_countries$ISO3)
 GRASSI_countries[!(GRASSI_countries %in% WDI_countries$ISO3)] # list of missing countries (not in WDI list)
+
+# Drop countries/regions not in WDI
+GRASSI_long <- GRASSI_long[ISO3 %in% WDI_countries$ISO3]
 
 # Drop countries/regions not in WDI
 EDGAR_long <- EDGAR_long[ISO3 %in% WDI_countries$ISO3]
 
 #PIK_long[, value := value / 1000] # convert to Mt from gigagram (gigagram = 10^9 g = 10^6 kg = 10^3 t = kt)
 
+#### Prepare GRASSI data ####
+#GRASSI_long %>% 
+
+##### Export GRASSI data #####
+## Prepare files for upload in DCS
+# Need columns: Time	Country	Series	SCALE	Data
+# E.g. YR1960	AFG	SP.POP.TOTL	0	8996967
+
+# Check if all lines labelled (gas and sector)
+table(GRASSI_long$`LAND CATEGORY`, useNA = "always") # 5 indicators
+
+GRASSI_long <- GRASSI_long %>%
+  mutate(value = round(value, 4))
+
+table(is.na(GRASSI_long$Series))
+dim(GRASSI_long)
+
+GRASSI_for_export <- GRASSI_long %>% 
+  mutate(SCALE = 0) %>% # SCALE variable needed in DCS, all 0
+  select(year, ISO3, Series, SCALE, value) %>%
+  dplyr::rename(Time = year,
+                Country = ISO3,
+                Series = Series,
+                Data = value) %>%
+  mutate(Time = paste0("YR", Time)) 
+
+#View(EDGAR_for_export %>% filter(Country == "NLD" & Time == "YR2022"))
+
+# Write complete file as csv
+getwd()
+write.csv(GRASSI_for_export, paste0("./Data/", format(Sys.Date(), "%Y%m%d"), "GHG_LULUCF_data_for_DCS_combined.csv"))
+
+# Write XSLX file with one sheet per indicator
+list_of_indicators_LULUCF <- unique(GRASSI_for_export$Series)
+list_of_indicators_LULUCF
+
+wb1 <- createWorkbook()
+for(i in 1:length(list_of_indicators_LULUCF)){
+  addWorksheet(wb1, 
+               list_of_indicators_LULUCF[i])
+  writeData(wb1, 
+            list_of_indicators_LULUCF[i], 
+            GRASSI_for_export %>% 
+              filter(Series == list_of_indicators_LULUCF[i]))
+}
+
+saveWorkbook(wb1, file = paste0("./Data/", 
+                               format(Sys.Date(), "%Y%m%d"), 
+                               "GHG_LULUCF_data_for_DCS_by_sheet.xlsx"), overwrite = FALSE)
+
+# Compare with CSC data from Jichong
+#### Compare CSC data from Jichong with our results ####
+# See dashboard with CSC data: https://public.tableau.com/app/profile/david.groves/viz/WBGCSC-HistoricalGHGEmissions-v2d/GHGEmissions
+# read spreadsheet
+CSC_data_LULUCF <- as.data.frame(read_xlsx("CSC-GHG_emissions-LATEST.xlsx", 
+                                    sheet = "C total subs & gas (V8+Grassi)"))
+dim(CSC_data_LULUCF)
+table(CSC_data_LULUCF$`CSC Sector`)
+CSC_data_LULUCF <- 
+  CSC_data_LULUCF %>% 
+  filter(`CSC Sector` == "Land Use, Land Use Change, and Forestry") %>%
+  select(c(Code, `CSC Sector`, `CSC Subsector`, Gas, as.character(2000:2022))) %>% # select columns
+  tidyr::pivot_longer(cols = as.character(2000:2022), # to long format
+                      names_to = "year") %>% 
+  mutate(Series = case_when(
+    `CSC Subsector` == "LULUCF - Deforestation" ~ "EN.GHG.CO2.LU.DF.MT.CE.AR5",   
+    `CSC Subsector` == "LULUCF - Organic Soil " ~ "EN.GHG.CO2.LU.OS.MT.CE.AR5",    
+    `CSC Subsector` == "LULUCF - Forest Land" ~ "EN.GHG.CO2.LU.FL.MT.CE.AR5",   
+    `CSC Subsector` == "LULUCF - Other Land" ~ "EN.GHG.CO2.LU.OL.MT.CE.AR5")) %>%
+  select(c(Code, Gas, year, value, Series))
+
+CSC_data_LULUCF <- rbind(CSC_data_LULUCF,
+                         CSC_data_LULUCF %>% 
+  group_by(Code, Gas, year) %>%
+  summarise(value = sum(value)) %>%
+  # add all rows with same code - gas - year - sector_WDI combination
+  mutate(year = as.integer(year)) %>%
+  mutate(Series = "EN.GHG.CO2.LU.MT.CE.AR5",
+         value = round(value, 4)))
+
+dim(CSC_data_LULUCF)
+compare_CSC_GRASSI <- GRASSI_long %>% left_join(CSC_data_LULUCF,
+                                                by = c('ISO3'='Code', 
+                                                       'year'='year',
+                                                       'Substance' = 'Gas',
+                                                       'Series' = 'Series'))
+dim(compare_CSC_GRASSI)
+compare_CSC_GRASSI <- compare_CSC_GRASSI %>% mutate(x_div_y = value.x / round(value.y, 4))
+summary(compare_CSC_GRASSI$x_div_y)
+table(compare_CSC_GRASSI$x_div_y, compare_CSC_GRASSI$Series, useNA= "always")
+
+#View(compare_CSC_GRASSI %>% filter(is.na(x_div_y)))
+
+test_G <- compare_CSC_GRASSI %>% filter((x_div_y > 1.001 | x_div_y < 0.999) & !is.na(x_div_y))
+table(test_G$Series)
+
+#View(test_G %>% filter(Series == "EN.GHG.CH4.FE.MT.CE.AR5"))
+
+#### Prepare EDGAR data ####
 # Add "Time", "Country", "SCALE" columns as in DCS template
 EDGAR_long[, Time := paste0("YR", year)]
 EDGAR_long[, Country := ISO3]
@@ -179,7 +300,9 @@ EDGAR_long[Substance %in% c("CO2",
 EDGAR_long <- EDGAR_long[-which(Substance == "CO2bio"), ]
 
 # Test: drop CH4/bio
-EDGAR_long <- EDGAR_long[-which(Substance == "CH4" & fossil_bio == "bio"), ]
+
+#View(EDGAR_long %>% filter(year == 2022 & ISO3 == "NLD"))
+#EDGAR_long <- EDGAR_long[-which(Substance == "N2O" & fossil_bio == "bio"), ]
 
 table(EDGAR_long$GHG, useNA = "ifany")
 
@@ -202,8 +325,10 @@ head(EDGAR_long)
 EDGAR_long <- EDGAR_long %>% mutate(GWP_factor  = case_when(
   (GHG == "CO2" | GHG == "FGAS" | GHG == "GWP_100_AR5_GHG") ~ 1, # CO2 and F-gases and total (already converted)
   (GHG == "N2O") ~ 265,
-  (GHG == "CH4" & category %in% c("2.B", "2.C", "4.A", "4.B", "4.C", "4.D")) ~ 30, # CH4 for solid waste
-  (GHG == "CH4" & !(category %in% c("2.B", "2.C", "4.A", "4.B", "4.C", "4.D"))) ~ 28)) # CH4
+  (GHG == "CH4" & category %in% c("2.B", "2.C", "4.A", "4.B", "4.C", "4.D",
+                                  "1.A.1.bc", "1.B.1", "1.B.2", "5.B")) ~ 30, # CH4 for solid waste
+  (GHG == "CH4" & !(category %in% c("2.B", "2.C", "4.A", "4.B", "4.C", "4.D",
+                                    "1.A.1.bc", "1.B.1", "1.B.2", "5.B"))) ~ 28)) # CH4
 
 table(EDGAR_long$GHG, EDGAR_long$GWP_factor, useNA = "ifany")
 
@@ -216,9 +341,9 @@ EDGAR_long <- EDGAR_long %>% mutate(value := value * GWP_factor)
 # •	Waste - Wastewater Treatment (4D) used a GWP AR5-100 factor of 30 instead of 28 and you only need aggregate CH4 "fossil"
 
 #### Convert to Mt from kt and round ####
-EDGAR_long <- EDGAR_long %>% mutate(value = round(value / 1000, 4))
+EDGAR_long <- EDGAR_long %>% mutate(value = round(value / 1000, 8))
 
-View(EDGAR_long %>% filter(ISO3 == "NLD" & year == "2020"))
+#View(EDGAR_long %>% filter(ISO3 == "NLD" & year == "2020"))
 
 #### Combine categories/sectors ####
 table(EDGAR_long$category)
@@ -253,7 +378,7 @@ EDGAR_long <- EDGAR_long %>% mutate(sector_WDI = case_when(
   (GHG == "N2O" & category %in% c("1.A.2")) ~ "IC",
   (GHG == "N2O" & category %in% c("1.A.3.a", "1.A.3.b_noRES", "1.A.3.c", "1.A.3.d", "1.A.3.e")) ~ "TR",
   (GHG == "N2O" & category %in% c("2.B", "2.G", "5.A")) ~ "IP",
-  (GHG == "N2O" & category %in% c("4.B", "4.C", "4.D")) ~ "WA",
+  (GHG == "N2O" & category %in% c("4.B", "4.C", "4.D")) ~ "WA", ## check 
   (GHG == "FGAS" & category %in% c("2.B", "2.C", "2.E", "2.F", "2.G")) ~ "IP",
   GHG == "GWP_100_AR5_GHG" ~ "ALL")) # all GHG together
 
@@ -292,7 +417,7 @@ table(EDGAR_long_tot$sector_WDI, EDGAR_long_tot$GHG)
 
 EDGAR_combined <- rbind(EDGAR_long, EDGAR_long_tot)
 
-##### Export data #####
+##### Add indicator names/codes for EDGAR data #####
 ## Prepare files for upload in DCS
 # Need columns: Time	Country	Series	SCALE	Data
 # E.g. YR1960	AFG	SP.POP.TOTL	0	8996967
@@ -308,12 +433,37 @@ EDGAR_combined <- EDGAR_combined %>% left_join(mapping_to_indicator_code,
                            by = c('GHG'='Specific_subject', 
                                   'sector_WDI'='Ext_1'))
 
+EDGAR_combined <- EDGAR_combined %>%
+  mutate(value = round(value, 4))
+
 table(is.na(EDGAR_combined$Series_code_new))
 table(EDGAR_combined$Series_code_new)
 dim(EDGAR_combined)
 EDGAR_combined
 #View(EDGAR_combined %>% filter(ISO3 == "NLD" & year == "2022"))
 
+#### Add data for 1990 comparison for years 1991 - 2030 ####
+EDGAR_1990 <- EDGAR_combined %>% filter(year == 1990) %>%
+  filter(Series_code_new %in% c("EN.GHG.ALL.MT.CE.AR5", # Total greenhouse gas emissions excluding LULUCF (Mt CO2e)
+                                "EN.GHG.CO2.MT.CE.AR5", #	Carbon dioxide (CO2) emissions (total) excluding LULUCF (Mt CO2e)
+                                "EN.GHG.CH4.MT.CE.AR5",	# Methane (CH4) emissions (total) excluding LULUCF (Mt CO2e)
+                                "EN.GHG.N2O.MT.CE.AR5")) %>% 	# Nitrous oxide (N2O) emissions (total) excluding LULUCF (Mt CO2e)
+  mutate(Series_code_new = gsub(".MT.CE.", ".1990.", Series_code_new)) 
+
+EDGAR_1990_values <- EDGAR_1990 %>% mutate(year = 1991)
+
+for(i in 1992:2030){
+  print(i)
+  EDGAR_1990_values <- rbind(EDGAR_1990_values, 
+                      EDGAR_1990 %>% mutate(year = i))
+}
+
+dim(EDGAR_1990_values)
+
+EDGAR_combined <- rbind(EDGAR_combined,
+                        EDGAR_1990_values)
+
+#### Export EDGAR data ####
 EDGAR_for_export <- EDGAR_combined %>% 
   mutate(SCALE = 0) %>% # SCALE variable needed in DCS, all 0
   select(year, ISO3, Series_code_new, SCALE, value) %>%
@@ -321,7 +471,7 @@ EDGAR_for_export <- EDGAR_combined %>%
                 Country = ISO3,
                 Series = Series_code_new,
                 Data = value) %>%
-  mutate(Time = paste0("YR", Time))
+  mutate(Time = paste0("YR", Time)) 
 
 #View(EDGAR_for_export %>% filter(Country == "NLD" & Time == "YR2022"))
 
@@ -333,23 +483,25 @@ write.csv(EDGAR_for_export, paste0("./Data/", format(Sys.Date(), "%Y%m%d"), "GHG
 list_of_indicators <- unique(EDGAR_for_export$Series)
 list_of_indicators
 
-wb <- createWorkbook()
+wb2 <- createWorkbook()
 for(i in 1:length(list_of_indicators)){
-  addWorksheet(wb, 
+  addWorksheet(wb2, 
                list_of_indicators[i])
-  writeData(wb, 
+  writeData(wb2, 
             list_of_indicators[i], 
             EDGAR_for_export %>% 
               filter(Series == list_of_indicators[i]))
 }
 
-saveWorkbook(wb, file = paste0("./Data/", 
+saveWorkbook(wb2, file = paste0("./Data/", 
                                format(Sys.Date(), "%Y%m%d"), 
                                "GHG_data_for_DCS_by_sheet.xlsx"), overwrite = FALSE)
 
-### Compare CSC data from Jichong with our results  
+#### Compare CSC data from Jichong with our results ####
+# See dashboard with CSC data: https://public.tableau.com/app/profile/david.groves/viz/WBGCSC-HistoricalGHGEmissions-v2d/GHGEmissions
 # read spreadsheet
-CSC_data <- as.data.frame(read_xlsx("CSC-GHG_emissions-LATEST.xlsx", sheet = "C total subs & gas (V8+Grassi)"))
+CSC_data <- as.data.frame(read_xlsx("CSC-GHG_emissions-LATEST.xlsx", 
+                                    sheet = "C total subs & gas (V8+Grassi)"))
 dim(CSC_data)
 CSC_data <- 
   CSC_data %>% select(c(Code, `CSC Sector`, `CSC Subsector`, Gas, as.character(2000:2022))) %>% # select columns
@@ -366,8 +518,12 @@ CSC_data <-
       `CSC Sector` == "Waste" ~ "WA",
       `CSC Sector` == "Land Use, Land Use Change, and Forestry" ~ "LU")) %>%
     select(c(Code, Gas, year, value, sector_WDI)) %>% 
-  mutate(year = as.integer(year))
-
+  group_by(Code, Gas, year, sector_WDI) %>%
+  summarise(value = sum(value)) %>%
+  # add all rows with same code - gas - year - sector_WDI combination
+  mutate(year = as.integer(year)) %>%
+  mutate(value = round(value, 4))
+dim(CSC_data)
 compare_CSC_WDI <- EDGAR_combined %>% left_join(CSC_data,
                                                 by = c('ISO3'='Code', 
                                                        'year'='year',
@@ -378,8 +534,13 @@ compare_CSC_WDI <- compare_CSC_WDI %>% filter(year >= 2000) %>%
   filter(sector_WDI != "ALL")
 compare_CSC_WDI <- compare_CSC_WDI %>% mutate(x_div_y = value.x / round(value.y, 4))
 summary(compare_CSC_WDI$x_div_y)
-test <- compare_CSC_WDI %>% filter((x_div_y > 1.01 | x_div_y < 0.99) & !is.na(x_div_y))
+test <- compare_CSC_WDI %>% filter((x_div_y > 1.001 | x_div_y < 0.999) & !is.na(x_div_y))
 table(test$Series_code_new)
+
+#View(test %>% filter(Series_code_new == "EN.GHG.CH4.FE.MT.CE.AR5"))
+test %>% filter(Series_code_new == "EN.GHG.CH4.FE.MT.CE.AR5" & ISO3 == "NLD")
+
+tail(CSC_data %>% filter(sector_WDI == "FE" & Code == "NLD" & Gas == "CH4"))
 
 #write.csv(EDGAR_long, "./Data_private/EDGAR/EDGAR_long_prep.csv")
 
