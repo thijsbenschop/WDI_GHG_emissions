@@ -10,7 +10,7 @@ library(dplyr)
 library(data.table)
 
 # Read data from Excel spreadsheet
-LULUCF_data <- as.data.table(read_xlsx("Data_private/timeseries_NGHGI.xlsx"))
+LULUCF_data <- as.data.table(read_xlsx("Data_private/EFO_LULUCF/20250822timeseries_NGHGI.xlsx"))
 head(LULUCF_data)
 
 # Create three columns with data for each version of the data according to the column version
